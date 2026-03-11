@@ -1,0 +1,363 @@
+name: Setup Project Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      student_name:
+        description: "Your name for issue titles (for example: Jordan Lee)"
+        required: true
+        type: string
+      mode:
+        description: "Choose whether to create missing issues or sync open issue bodies to the latest templates"
+        required: true
+        default: create_missing
+        type: choice
+        options:
+          - create_missing
+          - sync_open
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  setup-project-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create or sync project issues
+        uses: actions/github-script@v7
+        env:
+          MODE: ${{ inputs.mode }}
+          STUDENT_NAME: ${{ inputs.student_name }}
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const workspace = process.env.GITHUB_WORKSPACE;
+            const studentName = (process.env.STUDENT_NAME || "").trim();
+            const mode = process.env.MODE || "create_missing";
+
+            if (!studentName) {
+              core.setFailed("student_name is required.");
+              return;
+            }
+
+            const issueDefs = [
+              {
+                key: "master",
+                baseTitle: "Project 2 Master Checklist",
+                file: ".github/ISSUE_TEMPLATE/project-2-master-checklist.md"
+              },
+              {
+                key: "story",
+                baseTitle: "Story + Structure",
+                file: ".github/ISSUE_TEMPLATE/story-structure.md"
+              },
+              {
+                key: "motion",
+                baseTitle: "GSAP Motion Foundation",
+                file: ".github/ISSUE_TEMPLATE/gsap-motion-foundation.md"
+              },
+              {
+                key: "scrolltrigger",
+                baseTitle: "ScrollTrigger Core",
+                file: ".github/ISSUE_TEMPLATE/scrolltrigger-core.md"
+              },
+              {
+                key: "showpiece",
+                baseTitle: "Pinned Showpiece",
+                file: ".github/ISSUE_TEMPLATE/pinned-showpiece.md"
+              },
+              {
+                key: "smoother",
+                baseTitle: "ScrollSmoother Setup",
+                file: ".github/ISSUE_TEMPLATE/scrollsmoother-setup.md"
+              },
+              {
+                key: "tokens",
+                baseTitle: "Tokens + Theme Modes",
+                file: ".github/ISSUE_TEMPLATE/tokens-and-theme-modes.md"
+              },
+              {
+                key: "qa",
+                baseTitle: "Assets + Accessibility + QA",
+                file: ".github/ISSUE_TEMPLATE/assets-accessibility-qa.md"
+              },
+              {
+                key: "reflection",
+                baseTitle: "Reflection + README + Submission",
+                file: ".github/ISSUE_TEMPLATE/reflection-readme-submission.md"
+              }
+            ];
+
+            const subIssueLabels = {
+              story: "Story + Structure issue",
+              motion: "GSAP Motion Foundation issue",
+              scrolltrigger: "ScrollTrigger Core issue",
+              showpiece: "Pinned Showpiece issue",
+              smoother: "ScrollSmoother Setup issue",
+              tokens: "Tokens + Theme Modes issue",
+              qa: "Assets + Accessibility + QA issue",
+              reflection: "Reflection + README + Submission issue"
+            };
+
+            const masterDef = issueDefs[0];
+            const subDefs = issueDefs.slice(1);
+            const created = [];
+            const updated = [];
+            const skipped = [];
+
+            function titleFor(def) {
+              return `${def.baseTitle} - ${studentName}`;
+            }
+
+            function templateBody(def) {
+              const fullPath = path.join(workspace, def.file);
+              const raw = fs.readFileSync(fullPath, "utf8");
+              return stripFrontMatter(raw).trim() + "\n";
+            }
+
+            function stripFrontMatter(text) {
+              if (!text.startsWith("---")) {
+                return text;
+              }
+
+              const lines = text.split("\n");
+              let endIndex = -1;
+              for (let i = 1; i < lines.length; i += 1) {
+                if (lines[i].trim() === "---") {
+                  endIndex = i;
+                  break;
+                }
+              }
+
+              if (endIndex === -1) {
+                return text;
+              }
+
+              return lines.slice(endIndex + 1).join("\n");
+            }
+
+            function extractCheckboxStates(body) {
+              const map = new Map();
+              const regex = /^- \[([ xX])\] (.+)$/gm;
+              let match;
+              while ((match = regex.exec(body || "")) !== null) {
+                map.set(match[2].trim(), match[1].toLowerCase() === "x" ? "x" : " ");
+              }
+              return map;
+            }
+
+            function extractFieldValues(body) {
+              const map = new Map();
+              const regex = /^- ([^:\n]+):\s*(.+)$/gm;
+              let match;
+              while ((match = regex.exec(body || "")) !== null) {
+                const key = match[1].trim();
+                const value = match[2].trim();
+                if (value) {
+                  map.set(key, value);
+                }
+              }
+              return map;
+            }
+
+            function preserveIssueState(previousBody, nextBody) {
+              const checkboxStates = extractCheckboxStates(previousBody);
+              const fieldValues = extractFieldValues(previousBody);
+
+              let merged = nextBody.replace(
+                /^- \[([ xX])\] (.+)$/gm,
+                (line, _state, label) => {
+                  const normalizedLabel = label.trim();
+                  if (checkboxStates.has(normalizedLabel)) {
+                    return `- [${checkboxStates.get(normalizedLabel)}] ${label}`;
+                  }
+                  return `- [ ] ${label}`;
+                }
+              );
+
+              merged = merged.replace(
+                /^- ([^:\n]+):\s*$/gm,
+                (line, key) => {
+                  const normalizedKey = key.trim();
+                  if (fieldValues.has(normalizedKey)) {
+                    return `- ${key}: ${fieldValues.get(normalizedKey)}`;
+                  }
+                  return line;
+                }
+              );
+
+              return merged;
+            }
+
+            function escapeRegex(value) {
+              return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            }
+
+            function injectMasterLinks(body, issueMap) {
+              let nextBody = body;
+
+              for (const [key, label] of Object.entries(subIssueLabels)) {
+                const issue = issueMap.get(key);
+                if (!issue) {
+                  continue;
+                }
+
+                const pattern = new RegExp(
+                  `(^- \\[[ xX]\\] ${escapeRegex(label)}:\\s*)#?.*$`,
+                  "m"
+                );
+
+                if (pattern.test(nextBody)) {
+                  nextBody = nextBody.replace(pattern, `$1#${issue.number}`);
+                }
+              }
+
+              return nextBody;
+            }
+
+            function renderBody(def, previousBody = "", issueMap = new Map()) {
+              let nextBody = templateBody(def);
+
+              if (previousBody) {
+                nextBody = preserveIssueState(previousBody, nextBody);
+              }
+
+              if (def.key === "master") {
+                nextBody = injectMasterLinks(nextBody, issueMap);
+              }
+
+              return nextBody;
+            }
+
+            async function listIssues(state) {
+              const all = await github.paginate(github.rest.issues.listForRepo, {
+                owner,
+                repo,
+                state,
+                per_page: 100
+              });
+
+              return all
+                .filter((issue) => !issue.pull_request)
+                .sort((a, b) => b.number - a.number);
+            }
+
+            let repoIssues = await listIssues("all");
+
+            function findIssue(def, state = "all") {
+              return repoIssues.find(
+                (issue) =>
+                  issue.title.startsWith(def.baseTitle) &&
+                  (state === "all" || issue.state === state)
+              );
+            }
+
+            function currentIssueMap() {
+              const map = new Map();
+              for (const def of subDefs) {
+                const issue = findIssue(def, "all");
+                if (issue) {
+                  map.set(def.key, issue);
+                }
+              }
+              return map;
+            }
+
+            async function createIssue(def) {
+              const issueMap = currentIssueMap();
+              const body = renderBody(def, "", issueMap);
+              const response = await github.rest.issues.create({
+                owner,
+                repo,
+                title: titleFor(def),
+                body
+              });
+
+              created.push(`#${response.data.number} ${response.data.title}`);
+              repoIssues.unshift(response.data);
+              return response.data;
+            }
+
+            async function updateIssue(def, issue) {
+              const issueMap = currentIssueMap();
+              const nextTitle = titleFor(def);
+              const nextBody = renderBody(def, issue.body || "", issueMap);
+              const bodyChanged = (issue.body || "").trim() !== nextBody.trim();
+              const titleChanged = issue.state === "open" && issue.title !== nextTitle;
+
+              if (!bodyChanged && !titleChanged) {
+                skipped.push(`#${issue.number} ${issue.title}`);
+                return issue;
+              }
+
+              const response = await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                title: titleChanged ? nextTitle : issue.title,
+                body: nextBody
+              });
+
+              updated.push(`#${response.data.number} ${response.data.title}`);
+              repoIssues = repoIssues.map((item) =>
+                item.number === response.data.number ? response.data : item
+              );
+              return response.data;
+            }
+
+            if (mode === "create_missing") {
+              for (const def of issueDefs) {
+                if (!findIssue(def, "all")) {
+                  await createIssue(def);
+                }
+              }
+
+              for (const def of issueDefs) {
+                const openIssue = findIssue(def, "open");
+                if (openIssue) {
+                  await updateIssue(def, openIssue);
+                }
+              }
+            } else if (mode === "sync_open") {
+              for (const def of issueDefs) {
+                const openIssue = findIssue(def, "open");
+                if (openIssue) {
+                  await updateIssue(def, openIssue);
+                }
+              }
+            } else {
+              core.setFailed(`Unsupported mode: ${mode}`);
+              return;
+            }
+
+            const summaryLines = [
+              `Mode: ${mode}`,
+              `Student name: ${studentName}`,
+              "",
+              `Created: ${created.length}`,
+              ...created,
+              "",
+              `Updated: ${updated.length}`,
+              ...updated,
+              "",
+              `Unchanged: ${skipped.length}`,
+              ...skipped
+            ];
+
+            const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+            if (summaryPath) {
+              fs.appendFileSync(summaryPath, "## Setup Project Issues\n\n");
+              for (const line of summaryLines) {
+                fs.appendFileSync(summaryPath, `${line}\n`);
+              }
+            }
+
+            core.info(summaryLines.join("\n"));
