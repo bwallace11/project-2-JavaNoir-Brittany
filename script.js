@@ -421,9 +421,6 @@ function updateParallax() {
     const layers = {
       '#parallax-sky':   [-4,  -2],
       '#parallax-bgimg': [-7,  -3],
-      '#parallax-far':   [-10, -4],
-      '#parallax-mid':   [-20, -8],
-      '#parallax-close': [-32, -12],
       '#parallax-fg':    [-46, -16],
       '#parallax-chars': [-60, -22],
     };
@@ -718,8 +715,6 @@ function initHorizontalScroll() {
         if (hint) {
           hint.classList.toggle('hidden', activeIdx >= chapters.length - 1);
         }
-        // Ch1 text slam animation
-        updateCh1Text(self.progress);
       }
     }
   });
@@ -751,9 +746,6 @@ function initChapter1_Flashlight() {
   const consoleLines = document.querySelector('#console-lines');
 
   syncCaseProgressUI();
-
-  // ── GSAP STICKY TEXT: pin ch1 text to viewport, slam out when leaving ch1 ──
-  initCh1StickyText();
 
   function addConsoleLine(html, cls) {
     if (!consoleLines) return;
@@ -800,27 +792,6 @@ function initChapter1_Flashlight() {
 }
 
 
-
-/* ─────────────────────────────────────────────
-   CH1 STICKY TEXT — force fixed position via JS
-   Items slam in staggered on enter.
-   Panel slams into left wall when scrolling to ch2.
-   Slams back in when scrolling back.
-   ───────────────────────────────────────────── */
-function initCh1StickyText() {
-  const panel = document.querySelector('#ch1-text-panel');
-  if (!panel) return;
-
-  // Panel stays position:absolute inside its chapter — no fixed positioning needed.
-  // Just ensure it's visible and styled.
-  panel.style.cssText = '';
-
-  window._ch1Panel = panel;
-  window._ch1Slammed = false;
-}
-
-// No-op — panel is now absolute inside Ch1, no progress-based show/hide needed
-function updateCh1Text(p) {}
 
 /* ─────────────────────────────────────────────
    CHAPTER TEXT FLY-INS

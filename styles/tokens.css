@@ -12,28 +12,19 @@
   --color-dusk:        #1a1535;
   --color-fog:         #2a2350;
 
-  --color-blue-dark:   #0d1b4a;
-  --color-blue-mid:    #1a3a7a;
   --color-blue-light:  #2a5fd6;
   --color-blue-neon:   #3d7fff;
   --color-blue-glow:   #7ab3ff;
 
-  --color-purple-dark: #1e0a3c;
-  --color-purple-mid:  #5c3a9a;
   --color-purple-neon: #b894ff;
 
-  --color-red-blood:   #8b0000;
-  --color-red-dark:    #5c0000;
   --color-red-bright:  #cc2200;
   --color-red-neon:    #ff3333;
 
   --color-amber:       #ffaa00;
   --color-amber-dim:   #cc7700;
-  --color-muzzle:      #ff6600;
 
   --color-green-term:  #00ff41;
-  --color-green-dim:   #00aa2a;
-
   --color-smoke:       #9090aa;
   --color-mist:        #c8c8dd;
   --color-paper:       #e8e0cc;
@@ -45,13 +36,6 @@
   --font-body:     'Crimson Pro', Georgia, serif;
   --font-ui:       'Share Tech Mono', monospace;
 
-  --text-xs:    0.65rem;
-  --text-sm:    0.85rem;
-  --text-base:  1rem;
-  --text-md:    1.25rem;
-  --text-lg:    1.6rem;
-  --text-xl:    2rem;
-  --text-2xl:   3rem;
   --text-hero:  3.5rem;
   --text-hero:  clamp(2.5rem, 6vw, 5rem);
 

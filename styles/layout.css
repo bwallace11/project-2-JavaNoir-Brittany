@@ -455,12 +455,6 @@ html.motion-reduced #custom-cursor {
   animation: window-blink 5.4s linear infinite;
 }
 
-/* Keep noirBG as the only intro backdrop source */
-#parallax-far,
-#parallax-mid,
-#parallax-close {
-  display: none !important;
-}
 #continue-prompt {
   position: absolute;
   bottom: 80px;
