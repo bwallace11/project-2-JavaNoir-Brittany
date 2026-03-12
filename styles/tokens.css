@@ -1,0 +1,104 @@
+/* ============================================
+   DESIGN TOKENS — Lost in the Scroll
+   All visual values live here as CSS variables.
+   Think of these as the DNA of the design.
+   ============================================ */
+
+:root {
+  /* ── COLORS ── */
+  --color-void:        #03020a;
+  --color-night:       #0a0818;
+  --color-shadow:      #110d2a;
+  --color-dusk:        #1a1535;
+  --color-fog:         #2a2350;
+
+  --color-blue-dark:   #0d1b4a;
+  --color-blue-mid:    #1a3a7a;
+  --color-blue-light:  #2a5fd6;
+  --color-blue-neon:   #3d7fff;
+  --color-blue-glow:   #7ab3ff;
+
+  --color-purple-dark: #1e0a3c;
+  --color-purple-mid:  #5c3a9a;
+  --color-purple-neon: #b894ff;
+
+  --color-red-blood:   #8b0000;
+  --color-red-dark:    #5c0000;
+  --color-red-bright:  #cc2200;
+  --color-red-neon:    #ff3333;
+
+  --color-amber:       #ffaa00;
+  --color-amber-dim:   #cc7700;
+  --color-muzzle:      #ff6600;
+
+  --color-green-term:  #00ff41;
+  --color-green-dim:   #00aa2a;
+
+  --color-smoke:       #9090aa;
+  --color-mist:        #c8c8dd;
+  --color-paper:       #e8e0cc;
+  --color-white:       #f5f3ff;
+
+  /* ── TYPOGRAPHY ── */
+  --font-display:  'Special Elite', 'Courier New', monospace;
+  --font-mono:     'VT323', 'Courier New', monospace;
+  --font-body:     'Crimson Pro', Georgia, serif;
+  --font-ui:       'Share Tech Mono', monospace;
+
+  --text-xs:    0.65rem;
+  --text-sm:    0.85rem;
+  --text-base:  1rem;
+  --text-md:    1.25rem;
+  --text-lg:    1.6rem;
+  --text-xl:    2rem;
+  --text-2xl:   3rem;
+  --text-hero:  clamp(2.5rem, 6vw, 5rem);
+
+  /* ── SPACING ── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  32px;
+  --space-xl:  64px;
+  --space-2xl: 128px;
+
+  /* ── SHADOWS & GLOWS ── */
+  --shadow-text-blue:   0 0 20px rgba(61,127,255,0.8);
+  --shadow-text-red:    0 0 20px rgba(255,51,51,0.8);
+  --shadow-text-amber:  0 0 15px rgba(255,170,0,0.7);
+  --shadow-text-green:  0 0 15px rgba(0,255,65,0.8);
+  --glow-blue:   0 0 30px rgba(61,127,255,0.5);
+  --glow-red:    0 0 30px rgba(204,34,0,0.6);
+  --glow-amber:  0 0 40px rgba(255,170,0,0.5);
+
+  /* ── TRANSITIONS ── */
+  --ease-noir:   cubic-bezier(0.25,0.46,0.45,0.94);
+  --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+  --dur-fast:    200ms;
+  --dur-mid:     400ms;
+  --dur-slow:    800ms;
+  --dur-cinema:  1200ms;
+
+  /* ── Z-INDEX ── */
+  --z-bg:      0;
+  --z-scene:   10;
+  --z-char:    20;
+  --z-fx:      30;
+  --z-ui:      40;
+  --z-overlay: 50;
+  --z-blood:   60;
+
+  /* ── RAIN ── */
+  --rain-color: rgba(100,150,255,0.12);
+  --rain-speed: 0.8s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast:   0ms;
+    --dur-mid:    0ms;
+    --dur-slow:   0ms;
+    --dur-cinema: 0ms;
+    --rain-speed: 9999s;
+  }
+}

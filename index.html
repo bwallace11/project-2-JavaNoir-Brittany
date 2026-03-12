@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#03020a" />
+  <title>JavaNoir — A JavaScript Mystery</title>
+  <meta name="description" content="A noir scrollytelling experience teaching JavaScript through a murder investigation." />
+  <link rel="icon" type="image/svg+xml" sizes="48x48" href="assets/svg/javaNoirFavi.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/layout.css" />
+  <link rel="stylesheet" href="styles/animations.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+  <a href="#main-story" class="skip-link">Skip to main story</a>
+  <div id="custom-cursor" aria-hidden="true"></div>
+  <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Story progress"></div>
+
+  <nav id="chapter-nav" aria-label="Chapter navigation">
+    <button type="button" class="nav-dot active" aria-label="Go to Chapter 1: The Alley" aria-current="step"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 2: The Room Reacts"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 3: The Crime Board"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 4: The Darkroom"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 5: The Filing Cabinet"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 6: Case Closed"></button>
+  </nav>
+
+  <button type="button" id="skip-intro-btn" aria-label="Skip intro animation">SKIP INTRO ▶</button>
+
+  <!-- ── HAMBURGER MENU ── -->
+  <button type="button" id="hamburger-btn" aria-label="Open settings menu" aria-controls="hamburger-menu" aria-haspopup="menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="hamburger-menu" role="menu" aria-hidden="true">
+    <p class="hm-title">SETTINGS</p>
+    <div class="hm-section-label">THEME</div>
+    <button type="button" class="hm-item" id="theme-dark" data-theme-choice="dark" role="menuitem">
+      <img class="hm-icon" src="assets/svg/darkModeJN.svg" alt="" aria-hidden="true" />
+      <span class="hm-item-label">Dark Mode</span>
+    </button>
+    <button type="button" class="hm-item" id="theme-light" data-theme-choice="light" role="menuitem">
+      <img class="hm-icon" src="assets/svg/lightModeJN.svg" alt="" aria-hidden="true" />
+      <span class="hm-item-label">UV Blacklight</span>
+    </button>
+    <button type="button" class="hm-item" id="theme-system" data-theme-choice="system" role="menuitem">
+      <img class="hm-icon" src="assets/svg/systemPref.svg" alt="" aria-hidden="true" />
+      <span class="hm-item-label">System Preference</span>
+    </button>
+    <div class="hm-section-label">ACCESSIBILITY</div>
+    <button type="button" class="hm-item" id="motion-toggle" data-motion="false" aria-pressed="false" role="menuitem">
+      <img class="hm-icon" src="assets/svg/reduceMotion.svg" alt="" aria-hidden="true" />
+      <span class="hm-item-label">Reduce Motion: OFF</span>
+    </button>
+  </div>
+
+  <div id="scroll-hint" aria-hidden="true">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       INTRO SCENE — Dark Alley Murder
+       ═══════════════════════════════════════ -->
+  <section id="intro-scene" aria-label="Opening cinematic: a murder in a dark alley">
+
+    <!-- Deep void sky — almost total darkness -->
+    <div id="parallax-sky" aria-hidden="true" style="position:absolute;inset:-40px;z-index:1;
+      background:
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(6,0,18,.95) 0%, transparent 70%),
+        radial-gradient(ellipse 100% 55% at 50% 100%, rgba(2,0,6,1) 0%, transparent 80%),
+        linear-gradient(180deg,#04020c 0%,#07040f 40%,#030108 100%);"></div>
+
+    <div id="parallax-bgimg" aria-hidden="true">
+      <img src="assets/images/noirBG.png" alt="" />
+      <div class="bg-neon-glow bg-neon-glow--pink"></div>
+      <div class="bg-neon-glow bg-neon-glow--cyan"></div>
+      <div class="bg-window-flicker"></div>
+    </div>
+
+    <!-- Far skyline — barely visible, deeply fogged -->
+    <div id="parallax-far" aria-hidden="true" style="position:absolute;inset:-30px;z-index:2;pointer-events:none;">
+      <svg width="110%" height="100%" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax meet" style="position:absolute;bottom:0;left:-5%;">
+        <defs>
+          <linearGradient id="bottomFog" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(3,1,10,0)"/>
+            <stop offset="100%" stop-color="rgba(3,1,10,0.92)"/>
+          </linearGradient>
+          <!-- Blood-red sky glow — something evil happened here -->
+          <radialGradient id="crimeGlow" cx="55%" cy="40%" r="35%">
+            <stop offset="0%" stop-color="rgba(70,0,0,0.18)"/>
+            <stop offset="100%" stop-color="rgba(70,0,0,0)"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="1200" height="700" fill="url(#crimeGlow)"/>
+        <!-- Distant silhouette buildings, extremely dark -->
+        <rect x="0"    y="430" width="55"  height="270" fill="#060209"/>
+        <rect x="60"   y="470" width="40"  height="230" fill="#050108"/>
+        <rect x="105"  y="400" width="75"  height="300" fill="#07030b"/>
+        <rect x="185"  y="460" width="50"  height="240" fill="#060209"/>
+        <rect x="240"  y="380" width="95"  height="320" fill="#08040d"/>
+        <rect x="340"  y="450" width="60"  height="250" fill="#05010a"/>
+        <rect x="405"  y="410" width="85"  height="290" fill="#07030a"/>
+        <rect x="495"  y="465" width="45"  height="235" fill="#060209"/>
+        <rect x="545"  y="395" width="105" height="305" fill="#08040d"/>
+        <rect x="655"  y="455" width="65"  height="245" fill="#060209"/>
+        <rect x="725"  y="415" width="80"  height="285" fill="#07030b"/>
+        <rect x="810"  y="460" width="50"  height="240" fill="#05010a"/>
+        <rect x="865"  y="400" width="90"  height="300" fill="#08040d"/>
+        <rect x="960"  y="450" width="70"  height="250" fill="#060209"/>
+        <rect x="1035" y="420" width="90"  height="280" fill="#07030a"/>
+        <rect x="1130" y="445" width="75"  height="255" fill="#06020a"/>
+        <!-- A few cold amber windows, barely lit -->
+        <rect x="22"  y="448" width="4" height="4" fill="rgba(180,120,20,.14)"/>
+        <rect x="120" y="418" width="4" height="4" fill="rgba(180,120,20,.11)"/>
+        <rect x="260" y="397" width="4" height="4" fill="rgba(60,100,180,.16)"/>
+        <rect x="420" y="428" width="4" height="4" fill="rgba(180,120,20,.10)"/>
+        <rect x="560" y="412" width="4" height="4" fill="rgba(60,100,180,.14)"/>
+        <rect x="880" y="418" width="4" height="4" fill="rgba(60,100,180,.12)"/>
+        <rect x="0" y="0" width="1200" height="700" fill="url(#bottomFog)"/>
+      </svg>
+    </div>
+
+    <!-- Mid buildings + neon signs, dimmed and ominous -->
+    <div id="parallax-mid" aria-hidden="true" style="position:absolute;inset:-20px;z-index:3;pointer-events:none;">
+      <svg width="110%" height="100%" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax meet" style="position:absolute;bottom:0;left:-5%;opacity:.85;">
+        <rect x="0"    y="305" width="85"  height="395" fill="#0b0812"/>
+        <rect x="90"   y="355" width="65"  height="345" fill="#09060f"/>
+        <rect x="160"  y="280" width="115" height="420" fill="#0c0916"/>
+        <rect x="280"  y="335" width="75"  height="365" fill="#0a0713"/>
+        <rect x="360"  y="260" width="135" height="440" fill="#0e0b1c"/>
+        <rect x="500"  y="325" width="90"  height="375" fill="#0c091a"/>
+        <rect x="595"  y="293" width="105" height="407" fill="#0d0a18"/>
+        <rect x="705"  y="345" width="70"  height="355" fill="#09060f"/>
+        <rect x="780"  y="272" width="125" height="428" fill="#0e0b1e"/>
+        <rect x="910"  y="330" width="80"  height="370" fill="#0a0714"/>
+        <rect x="995"  y="302" width="150" height="398" fill="#0d0a18"/>
+        <!-- Dim windows -->
+        <rect x="15"   y="325" width="8" height="8" fill="rgba(200,140,30,.3)"/>
+        <rect x="38"   y="325" width="8" height="8" fill="rgba(200,140,30,.18)"/>
+        <rect x="175"  y="298" width="8" height="8" fill="rgba(60,120,220,.35)"/>
+        <rect x="375"  y="278" width="10" height="8" fill="rgba(200,140,30,.38)"/>
+        <rect x="610"  y="310" width="8"  height="8" fill="rgba(60,120,220,.32)"/>
+        <rect x="795"  y="288" width="9"  height="8" fill="rgba(200,140,30,.30)"/>
+      </svg>
+      <!-- Ominous neon — flickering, broken -->
+      <div class="neon-sign neon-sign--red"  style="top:20%;left:15%;font-size:1.5rem;opacity:.50;" aria-hidden="true">NOIR</div>
+      <div class="neon-sign neon-sign--blue" style="top:32%;left:15%;font-size:1.1rem;animation-delay:.6s;opacity:.45;" aria-hidden="true">BAR</div>
+      <div class="neon-sign neon-sign--red" style="top:45%;right:25%;font-size:1.2rem;opacity:.35;" aria-hidden="true">OPEN</div>
+      <div style="position:absolute;top:15%;right:15%;font-family:var(--font-mono);font-size:1rem;
+                  color:#ff00ff;text-shadow:0 0 8px #ff00ff,0 0 18px #aa00aa;
+                  animation:neon-flicker 4s ease-in-out infinite;animation-delay:0.2s;opacity:.40;" aria-hidden="true">DRINKS</div>
+      <div style="position:absolute;top:55%;left:40%;font-family:var(--font-mono);font-size:.85rem;
+                  color:#00ffff;text-shadow:0 0 6px #00ffff,0 0 14px #008888;
+                  animation:neon-flicker 3.5s ease-in-out infinite;animation-delay:1s;opacity:.38;" aria-hidden="true">24 HRS</div>
+    </div>
+
+    <!-- Outside bar facade (brick building with neon signs) -->
+    <div id="parallax-close" aria-hidden="true" style="position:absolute;inset:-10px;z-index:4;pointer-events:none;">
+      <!-- Main brick wall background -->
+      <div style="position:absolute;left:0;right:0;top:8%;bottom:20%;
+        background:
+          repeating-linear-gradient(90deg, rgba(40,20,30,0.4) 0 44px, transparent 44px 88px),
+          repeating-linear-gradient(0deg, rgba(0,0,0,0.3) 0 24px, transparent 24px 48px),
+          linear-gradient(180deg, #3d2138 0%, #2d1a2a 50%, #1a0f14 100%);
+        border-top: 2px solid rgba(255,100,80,.3);"></div>
+      <!-- Left street-facing brick column -->
+      <div style="position:absolute;left:2%;top:10%;width:18%;height:60%;
+        background: linear-gradient(90deg, #2a1620 0%, #3a2230 50%, #2a1620 100%);
+        border-right: 2px solid rgba(0,0,0,.4);"></div>
+      <!-- Center bar storefront -->
+      <div style="position:absolute;left:20%;top:12%;width:60%;height:62%;
+        background: linear-gradient(0deg, #1a0f14 0%, #2a1820 40%, #3a2530 100%);
+        border: 3px solid #4a2838;
+        box-shadow: inset 0 0 40px rgba(0,0,0,.6), 0 0 25px rgba(0,0,0,.5);"></div>
+      <!-- Large storefront window/glass -->
+      <div style="position:absolute;left:28%;top:16%;width:44%;height:28%;
+        background: linear-gradient(135deg, rgba(60,20,80,.25) 0%, rgba(20,40,100,.15) 100%);
+        border: 2px solid rgba(255,200,100,.4);
+        box-shadow: inset 0 0 30px rgba(100,50,150,.2);"></div>
+      <!-- Bar entrance door -->
+      <div style="position:absolute;left:42%;top:44%;width:16%;height:26%;
+        background: linear-gradient(90deg, #0a0509 0%, #1a0f15 50%, #0a0509 100%);
+        border: 2px solid rgba(255,80,120,.3);
+        box-shadow: inset 0 0 20px rgba(255,0,100,.1);"></div>
+      <!-- Door handle glow -->
+      <div style="position:absolute;left:56.5%;top:56%;width:6px;height:6px;
+        background: radial-gradient(circle, rgba(255,100,150,.8) 0%, transparent 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 12px rgba(255,100,150,.6);"></div>
+      <!-- Neon sign: NOIR BAR (top) -->
+      <div style="position:absolute;left:28%;top:8%;font-family:var(--font-mono);font-size:1.2rem;letter-spacing:.15em;
+        color:#ff4488;text-shadow:0 0 10px #ff4488, 0 0 20px #cc1166;
+        animation:neon-flicker 3.5s ease-in-out infinite;opacity:.9;">NOIR BAR</div>
+      <!-- Neon sign: OPEN (right side) -->
+      <div style="position:absolute;right:8%;top:28%;font-family:var(--font-mono);font-size:.9rem;letter-spacing:.2em;
+        color:#00ffff;text-shadow:0 0 8px #00ffff, 0 0 16px #0088ff;
+        animation:neon-flicker 4s ease-in-out infinite;opacity:.8;animation-delay:.5s;">OPEN</div>
+      <!-- Neon sign: DRINKS (left) -->
+      <div style="position:absolute;left:4%;top:32%;font-family:var(--font-mono);font-size:.75rem;letter-spacing:.18em;
+        color:#ff00ff;text-shadow:0 0 8px #ff00ff, 0 0 16px #aa00cc;
+        animation:neon-flicker 3.8s ease-in-out infinite;opacity:.75;animation-delay:.8s;">DRINKS</div>
+      <!-- Street level stone/wet ground -->
+      <div style="position:absolute;bottom:0;left:-3%;right:-3%;height:22%;
+        background:linear-gradient(180deg, #1a0f14 0%, #0a0509 80%, #050203 100%);
+        border-top: 2px solid rgba(255,100,80,.2);"></div>
+      <div style="position:absolute;bottom:8%;left:30%;width:40%;height:8%;
+        background:radial-gradient(ellipse,rgba(255,0,150,.16) 0%,rgba(60,120,255,.08) 35%,transparent 100%);
+        filter:blur(8px);"></div>
+    </div>
+
+    <canvas id="intro-rain" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;"></canvas>
+    <div id="blood-overlay" style="position:fixed;inset:0;background:rgba(180,0,0,.85);opacity:0;pointer-events:none;z-index:120;" aria-hidden="true"></div>
+    <div id="blood-drip-bar" style="position:fixed;top:0;left:0;right:0;height:0;pointer-events:none;z-index:121;overflow:hidden;" aria-hidden="true"></div>
+
+    <!-- Foreground: gutter, trash, wet ground -->
+    <div id="parallax-fg" aria-hidden="true" style="position:absolute;inset:-15px;z-index:6;pointer-events:none;">
+      <div style="position:absolute;bottom:-5px;left:-5px;right:-5px;height:24%;
+        background:linear-gradient(to top,#010009 0%,#04020e 55%,transparent 100%);"></div>
+      <!-- Rain puddle with blue reflection -->
+      <div style="position:absolute;bottom:11%;right:9%;width:55px;height:10px;
+        background:radial-gradient(ellipse,rgba(40,70,160,.20) 0%,transparent 100%);
+        border-radius:50%;transform:skewX(-20deg);filter:blur(1px);"></div>
+    </div>
+
+    <div id="intro-title" style="position:absolute;top:28px;left:36px;z-index:50;opacity:0;">
+      <p style="font-family:var(--font-ui);font-size:.63rem;letter-spacing:.3em;color:var(--color-smoke);text-transform:uppercase;">A JavaScript Mystery</p>
+      <h1 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);color:var(--color-white);line-height:1.05;margin-top:6px;">JAVA<br>NOIR</h1>
+    </div>
+
+    <div id="parallax-chars" style="position:absolute;inset:0;z-index:20;pointer-events:none;">
+       <img id="intro-murderer" src="assets/images/murderer.png" alt="A shadowy figure approaches"
+         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:pixelated;display:none;" />
+       <img id="intro-shooting" src="assets/images/murdererShooting.png" alt="The figure fires a gun"
+         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:pixelated;display:none;" />
+       <img id="intro-victim" src="assets/images/victimAlive.png" alt="A man unaware of danger"
+         style="position:absolute;bottom:0;height:384px;right:22%;image-rendering:pixelated;" />
+       <img id="intro-victim-dead" src="assets/images/victimDead.png" alt="The man collapsed"
+         style="position:absolute;bottom:0;height:384px;width:auto;max-width:384px;object-fit:contain;right:22%;image-rendering:pixelated;display:none;" />
+    </div>
+
+    <button type="button" id="continue-prompt" aria-label="Begin investigating">
+      <span class="continue-title anim-flicker">PRESS TO CONTINUE</span>
+      <span class="continue-copy">Help solve the murder.</span>
+      <span class="continue-note">↓ Open DevTools (F12) — the case talks back</span>
+    </button>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       HORIZONTAL SCROLL STORY
+       ═══════════════════════════════════════ -->
+  <main id="main-story">
+  <div id="scroll-wrapper">
+  <div id="scroll-track">
+
+
+    <!-- ═══ CH 1: THE ALLEY ═══ -->
+    <article class="chapter chapter--1" id="chapter-1" aria-labelledby="ch1-title">
+
+      <div id="flashlight-overlay" aria-hidden="true"></div>
+      <canvas id="ch1-rain" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;" aria-hidden="true"></canvas>
+
+      <div class="neon-sign neon-sign--red"  style="top:17%;right:8%;font-size:1.9rem;" aria-hidden="true">NOIR</div>
+      <div class="neon-sign neon-sign--blue" style="top:29%;left:5%;font-size:1.1rem;"  aria-hidden="true">BAR</div>
+      <div class="neon-sign neon-sign--blue" style="top:42%;right:22%;font-size:.9rem;animation-delay:.8s;opacity:.45;" aria-hidden="true">OPEN</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to top,#03020a,transparent);z-index:4;pointer-events:none;" aria-hidden="true"></div>
+
+       <img src="assets/images/detective.png" alt="Detective with flashlight"
+         style="position:absolute;bottom:0;left:26%;height:280px;image-rendering:pixelated;z-index:25;filter:drop-shadow(4px 0 15px rgba(61,127,255,.4));transform:scaleX(-1);" />
+
+      <!-- 5 clues — external SVG evidence icons from assets/svg -->
+      <button type="button" class="clue-item" style="bottom:34%;left:57%;"
+              data-clue="Footprints" data-detail="Size 11 boot, deep heel. Walked fast." aria-label="Footprints">
+        <img class="clue-svg" src="assets/svg/footprints.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <button type="button" class="clue-item" style="bottom:48%;left:74%;"
+              data-clue="Shell Casing" data-detail=".38 caliber revolver, no serial." aria-label="Shell casing">
+        <img class="clue-svg" src="assets/svg/shellCasing.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <button type="button" class="clue-item" style="bottom:30%;left:83%;"
+              data-clue="Matchbook" data-detail="Club Noir — Room 7 scrawled inside." aria-label="Matchbook">
+        <img class="clue-svg" src="assets/svg/noirMatchbook.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <button type="button" class="clue-item" style="bottom:54%;left:46%;"
+              data-clue="Cigarette" data-detail="Expensive brand. Monogram: E" aria-label="Cigarette butt">
+        <img class="clue-svg" src="assets/svg/cigerette.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <button type="button" class="clue-item" style="bottom:39%;left:65%;"
+              data-clue="Torn Fabric" data-detail="Dark wool blend, gold button thread." aria-label="Torn fabric">
+        <img class="clue-svg" src="assets/svg/tornCloth.svg" alt="" aria-hidden="true" />
+      </button>
+
+      <div id="clue-counter" aria-live="polite">
+        <span class="clues-count">0</span>
+        <span style="font-size:.65rem;display:block;opacity:.5;letter-spacing:.1em;">/ 5 CLUES</span>
+      </div>
+
+      <div id="console-panel" aria-live="polite">
+        <div id="console-header">
+          <span class="c-dot" style="background:#ff5f57;"></span>
+          <span class="c-dot" style="background:#febc2e;"></span>
+          <span class="c-dot" style="background:#28c840;"></span>
+          <span class="c-title">Console</span>
+        </div>
+        <div id="console-lines">
+          <div class="cline cline-dim">// Move mouse → flashlight follows</div>
+          <div class="cline cline-code">const caseName = <span class="c-str">"CASE #4471"</span>;</div>
+          <div class="cline cline-code">let cluesFound = <span class="c-num">0</span>;</div>
+          <div class="cline cline-dim">// Click glowing clues to find them</div>
+        </div>
+      </div>
+
+      <div class="text-panel text-panel--left text-panel--top" id="ch1-text-panel" style="z-index:35;">
+        <p class="chapter-label ch1-slam-item">Chapter 01 — Evidence Collection</p>
+        <h2 class="chapter-title ch1-slam-item" id="ch1-title">The Alley</h2>
+        <p class="chapter-subtitle ch1-slam-item">console.log · let · const</p>
+        <p class="chapter-body">The rain hadn't let up in three days. Detective Sprout ducked under the yellow tape and stepped into the street where Victor Ember had been found face-down in his own blood. The first rule of any investigation is simple: <em>write everything down.</em> Every detail matters, even the ones that seem small. You don't solve a case from memory  you solve it from evidence.</p>
+        <p class="chapter-body" style="margin-top:10px;">In JavaScript, a <strong>variable</strong> is your notepad. <code style="color:var(--color-green-term)">const</code> is like a photograph sealed in an evidence bag. Once it's in there, it doesn't change. <code style="color:var(--color-green-term)">let</code> is a sticky note you can update. And <code style="color:var(--color-green-term)">console.log()</code> is your flashlight — it opens the notepad and reads out what's inside.</p>
+        <div class="code-block">// const — sealed evidence, never changes:
+const victimName = "Victor Ember";
+
+// let — may change as the case develops:
+let suspectCount = 4;
+let timeOfDeath  = "11:42 PM";
+
+// console.log reads it back to you:
+console.log(victimName);   // "Victor Ember"
+console.log(suspectCount); // 4
+
+// As the case develops, update a let:
+suspectCount = 3;
+console.log(suspectCount); // 3 — one cleared</div>
+        <p class="metaphor-line">"The case talks back to me."</p>
+      </div>
+
+    </article>
+
+
+    <!-- ═══ CH 2: INTERROGATION ROOM ═══ -->
+    <article class="chapter chapter--2" id="chapter-2" aria-labelledby="ch2-title">
+
+      <!-- Lamp + downward light cone -->
+      <button type="button" class="lamp" id="lamp-toggle-btn" aria-label="Toggle interrogation room light" aria-pressed="true">
+        <div class="lamp-cord"></div>
+        <div class="lamp-shade">
+          <div class="lamp-glow"></div>
+        </div>
+      </button>
+      <!-- Cone: wider at bottom, points DOWN — fixed clip-path -->
+      <div id="lamp-cone" aria-hidden="true"></div>
+
+      <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to top,#03020a 20%,transparent);pointer-events:none;z-index:20;" aria-hidden="true"></div>
+
+      <div id="interrogation-prompt" aria-live="polite">CLICK A SUSPECT — REVEAL THEIR SECRETS</div>
+      <div id="scroll-lock-msg" aria-live="polite">4 SUSPECTS REMAINING</div>
+
+      <div id="classlist-readout" aria-live="polite">
+        <div style="font-family:var(--font-ui);font-size:.54rem;letter-spacing:.15em;color:rgba(144,144,170,.5);margin-bottom:4px;">LAST CLICKED CARD</div>
+        <span class="cl-label">card.classList:</span>
+        <span id="classlist-value" class="cl-value">[ ]</span>
+        <div id="classlist-action" style="font-family:var(--font-ui);font-size:.58rem;color:var(--color-amber);margin-top:5px;min-height:14px;letter-spacing:.05em;"></div>
+      </div>
+
+      <div id="suspect-row">
+        <button type="button" class="suspect-card" data-suspect="doctor" aria-label="Interrogate Dr. Vue">
+          <img src="assets/images/suspectDoctor.png" alt="Dr. James Vue" />
+          <span class="suspect-name">DR. VUE</span>
+        </button>
+        <button type="button" class="suspect-card" data-suspect="widow" aria-label="Interrogate the Widow">
+          <img src="assets/images/suspectWidow.png" alt="Evelyn Ember" />
+          <span class="suspect-name">THE WIDOW</span>
+        </button>
+        <button type="button" class="suspect-card" data-suspect="butler" aria-label="Interrogate the Butler">
+          <img src="assets/images/suspectButler.png" alt="Edmund Angular" />
+          <span class="suspect-name">THE BUTLER</span>
+        </button>
+        <button type="button" class="suspect-card" data-suspect="nephew" aria-label="Interrogate the Nephew">
+          <img src="assets/images/suspectNephew.png" alt="Dante Ember" />
+          <span class="suspect-name">THE NEPHEW</span>
+        </button>
+      </div>
+
+      <div id="suspect-info-panel" aria-live="polite">
+        <button type="button" id="suspect-info-close" aria-label="Close">✕ CLOSE</button>
+        <img id="suspect-portrait" src="" alt="" />
+        <div id="suspect-info-text">
+          <div id="suspect-info-name"></div>
+          <div id="suspect-info-role"></div>
+          <div id="suspect-info-body"></div>
+          <div id="suspect-info-motive"></div>
+        </div>
+      </div>
+
+      <div class="text-panel text-panel--right text-panel--top" style="z-index:35;max-width:450px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:28px 32px;">
+        <p class="chapter-label">Chapter 02 — The Interrogation Room</p>
+        <h2 class="chapter-title" id="ch2-title">The Room<br>Reacts</h2>
+        <p class="chapter-subtitle">addEventListener · classList</p>
+        <p class="chapter-body" style="font-size:.87rem;">Sprout lined up the suspects in the cold fluorescent light. Each one gave nothing away. Until you <em>applied pressure.</em> A good detective doesn't just observe the room, he creates reactions and reads them. JavaScript works the same way. An <strong>event listener</strong> watches for something to happen, a click, a keypress, and then runs a piece of code in response.</p>
+        <p class="chapter-body" style="font-size:.87rem;margin-top:10px;">When a reaction occurs, you often need to visibly <em>change</em> something on the page. That's <code style="color:var(--color-green-term)">classList</code>. With <code style="color:var(--color-green-term)">classList.toggle()</code>, JavaScript can swap CSS classes in and out like swapping a suspect's expression under pressure, revealing what was always underneath.</p>
+        <div class="code-block" style="font-size:.7rem;">const suspect = document.querySelector(
+  '.suspect-card'
+);
+
+// Watch for a click — like slamming
+// a folder on the table:
+suspect.addEventListener('click',
+  function() {
+    // Toggle 'nervous' class on/off:
+    suspect.classList.toggle('nervous');
+  }
+);
+
+// In your CSS, .nervous might turn
+// the card red or shake it.</div>
+      </div>
+
+    </article>
+
+
+    <!-- ═══ CH 3: CRIME BOARD ═══ -->
+    <article class="chapter chapter--3" id="chapter-3" aria-labelledby="ch3-title">
+
+      <div id="corkboard" role="region" aria-label="Evidence corkboard">
+
+        <!-- Web drawn on click — z-index BELOW card text so strings go behind labels -->
+        <svg id="evidence-strings" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;" aria-hidden="true"></svg>
+
+        <!-- Evidence cards — z-index:6 so text sits above strings -->
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-0"
+             style="left:15%;top:8%;--card-rotation:-3deg;z-index:6;"
+             data-label="TIME OF DEATH" data-info="2:17 AM — coroner confirmed">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">TIME OF DEATH</span>2:17 AM
+        </div>
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-1"
+             style="left:35%;top:5%;--card-rotation:2deg;z-index:6;"
+             data-label="WEAPON" data-info=".38 revolver — unregistered, no serial">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">WEAPON</span>.38 Revolver
+        </div>
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-2"
+             style="left:60%;top:7%;--card-rotation:-1.5deg;z-index:6;"
+             data-label="LOCATION" data-info="East alley, Club Noir exit door #3">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">LOCATION</span>East Alley
+        </div>
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-3"
+             style="left:80%;top:10%;--card-rotation:3deg;z-index:6;"
+             data-label="MOTIVE" data-info="$4.2M estate — widow sole beneficiary">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">MOTIVE</span>$4.2M Estate
+        </div>
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-4"
+             style="left:84%;top:46%;--card-rotation:-2deg;z-index:6;"
+             data-label="EXIT KEY LOG" data-info="Butler used east key at 2:08 AM">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">EXIT KEY LOG</span>2:08 AM
+        </div>
+        <div class="evidence-card" role="button" tabindex="0" id="ecard-5"
+             style="left:5%;top:8%;--card-rotation:2.5deg;z-index:6;"
+             data-label="FORENSICS" data-info="Cigarette monogram: D.M. — the nephew">
+          <div class="pin" aria-hidden="true"></div>
+          <span class="card-label">FORENSICS</span>Monogram
+        </div>
+
+        <!-- Suspect photos — z-index:6 -->
+        <div class="suspect-photo suspect-photo--board" role="button" tabindex="0"
+             id="bphoto-doctor"
+             data-label="DR. VUE" data-info="On site 2AM. Blackmail: $800K malpractice cover-up."
+             style="left:82%;top:25%;transform:rotate(-4deg);z-index:6;">
+          <div class="pin" aria-hidden="true"></div>
+          <img src="assets/images/suspectDoctor.png" alt="Dr. Vue" />
+          <p class="photo-label">DR. VUE</p>
+        </div>
+        <div class="suspect-photo suspect-photo--board" role="button" tabindex="0"
+             id="bphoto-widow"
+             data-label="THE WIDOW" data-info="Sole $4.2M heir. Alibi: unverified."
+             style="left:5%;top:45%;transform:rotate(2deg);z-index:6;">
+          <div class="pin" aria-hidden="true"></div>
+          <img src="assets/images/suspectWidow.png" alt="The Widow" />
+          <p class="photo-label">THE WIDOW</p>
+        </div>
+        <div class="suspect-photo suspect-photo--board" role="button" tabindex="0"
+             id="bphoto-butler"
+             data-label="THE BUTLER" data-info="Only key to east exit. Used 2:08 AM."
+             style="left:12%;bottom:12%;transform:rotate(-2deg);z-index:6;">
+          <div class="pin" aria-hidden="true"></div>
+          <img src="assets/images/suspectButler.png" alt="The Butler" />
+          <p class="photo-label">THE BUTLER</p>
+        </div>
+        <div class="suspect-photo suspect-photo--board" role="button" tabindex="0"
+             id="bphoto-nephew"
+             data-label="THE NEPHEW" data-info="Disinherited. $180K debt. ATM 6 blocks away."
+             style="left:78%;bottom:11%;transform:rotate(3deg);z-index:6;">
+          <div class="pin" aria-hidden="true"></div>
+          <img src="assets/images/suspectNephew.png" alt="The Nephew" />
+          <p class="photo-label">THE NEPHEW</p>
+        </div>
+
+        <div id="ch3-click-hint" style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-family:var(--font-ui);font-size:.54rem;letter-spacing:.25em;color:rgba(144,144,170,.38);text-transform:uppercase;z-index:8;pointer-events:none;">
+          CLICK CARDS &amp; PHOTOS — WATCH THE WEB FORM
+        </div>
+
+        <!-- Text panel INSIDE corkboard so strings can connect to it -->
+        <div class="text-panel" id="ch3-text-panel" style="position:absolute;top:50%;left:50%;transform:translate(-50%, -50%) rotate(-1deg);z-index:7;background:rgba(3,2,10,.92);border:1px solid rgba(61,127,255,.15);padding:22px 26px;max-width:420px;pointer-events:none;">
+          <div class="pin" style="background:var(--color-blue-neon);box-shadow:0 0 8px var(--color-blue-neon);"></div>
+          <p class="chapter-label">Chapter 03 — The Crime Web</p>
+          <h2 class="chapter-title" id="ch3-title" style="font-size:1.4rem;">The Crime<br>Board</h2>
+          <p class="chapter-subtitle" style="font-size:.87rem;">data-* attributes</p>
+          <p class="chapter-body" style="font-size:.79rem;">Back at the precinct, Sprout covered an entire wall with photographs and string. Every piece of evidence had <em>hidden information</em> attached to it, invisible until you knew how to look. HTML elements work the same way. <strong>Data attributes</strong> let you attach extra details directly to an element using <code style="color:var(--color-green-term)">data-</code> as a prefix — invisible to the user but readable by JavaScript.</p>
+          <div class="code-block" style="font-size:.65rem;">&lt;div data-suspect="butler"
+     data-location="east-wing"&gt;
+  Torn jacket fibre
+&lt;/div&gt;
+
+// JS reads the hidden data:
+card.dataset.suspect
+// → "butler"
+
+card.dataset.location
+// → "east-wing"
+
+// Use it to trigger logic:
+if (card.dataset.suspect
+    === 'butler') {
+  // Add to shortlist
+}</div>
+        </div>
+      </div>
+
+    </article>
+
+
+    <!-- ═══ CH 4: DARKROOM ═══ -->
+    <article class="chapter chapter--4" id="chapter-4" aria-labelledby="ch4-title">
+
+      <div id="darkroom-light" aria-hidden="true"></div>
+      <div id="darkroom-safelight" aria-hidden="true"></div>
+      <div id="darkroom-flashlight" aria-hidden="true"></div>
+
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,#1a1208 0%,#0e0b06 50%,#050304 100%);z-index:1;" aria-hidden="true"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(to top,#0d0904,#1a1208);border-top:2px solid #2a2010;z-index:8;" aria-hidden="true"></div>
+
+      <div id="darkroom-instruction" aria-live="polite">TURN OFF THE LIGHTS — WATCH THE EVIDENCE DEVELOP</div>
+      <div id="darkroom-labels-live" aria-live="polite" aria-atomic="false" class="sr-only"></div>
+
+      <div id="room-light-switch">
+        <label>OFF</label>
+        <button type="button" id="light-switch-btn" aria-label="Toggle darkroom lights"><div id="switch-nub"></div></button>
+        <span id="switch-status">ON</span>
+      </div>
+
+      <div id="token-readout" aria-live="polite">
+        <div class="tr-row"><span class="tr-key">--color-night</span><span class="tr-arrow">→</span><span class="tr-val" id="tr-night">#0a0818</span></div>
+        <div class="tr-row"><span class="tr-key">--color-amber</span><span class="tr-arrow">→</span><span class="tr-val" id="tr-amber">#ffaa00</span></div>
+      </div>
+
+      <!-- Clothesline rope 1 -->
+      <div style="position:absolute;top:178px;left:2%;right:2%;height:2px;background:linear-gradient(90deg,transparent,rgba(80,60,30,.6) 5%,rgba(80,60,30,.6) 95%,transparent);z-index:9;" aria-hidden="true"></div>
+
+      <!-- ── ROW 1: MIXED PHOTOS ── -->
+
+      <!-- Photo: SHELL CASING -->
+      <div class="darkroom-photo darkroom-photo--evidence dr-parallax" data-depth="0.07" style="left:2%;top:123px;" id="drphoto-shell">
+        <div class="photo-string"></div>
+        <div class="photo-frame photo-frame--evidence">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <div class="evidence-photo-content">
+            <img src="assets/svg/shellCasing.svg" alt="" aria-hidden="true" />
+          </div>
+          <canvas class="drip-canvas" width="96" height="60" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">NO SERIAL #</span>
+        </div>
+        <p class="photo-caption">SHELL CASING</p>
+      </div>
+
+      <!-- Photo: DR VUE -->
+      <div class="darkroom-photo dr-parallax" data-depth="0.09" style="left:14%;top:123px;" id="drphoto-doctor">
+        <div class="photo-string"></div>
+        <div class="photo-frame">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <img src="assets/images/suspectDoctor.png" alt="Dr. Vue" />
+          <canvas class="drip-canvas" width="110" height="80" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">ON SITE 2:00 AM</span>
+        </div>
+        <p class="photo-caption">DR. VUE</p>
+      </div>
+
+      <!-- Photo: MATCHBOOK -->
+      <div class="darkroom-photo darkroom-photo--evidence dr-parallax" data-depth="0.06" style="left:28%;top:123px;" id="drphoto-matchbook">
+        <div class="photo-string"></div>
+        <div class="photo-frame photo-frame--evidence">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <div class="evidence-photo-content">
+            <img src="assets/svg/noirMatchbook.svg" alt="" aria-hidden="true" />
+          </div>
+          <canvas class="drip-canvas" width="96" height="60" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">ROOM 7 WRITTEN INSIDE</span>
+        </div>
+        <p class="photo-caption">MATCHBOOK</p>
+      </div>
+
+      <!-- Photo: WIDOW -->
+      <div class="darkroom-photo dr-parallax" data-depth="0.07" style="left:40%;top:123px;" id="drphoto-widow">
+        <div class="photo-string"></div>
+        <div class="photo-frame">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <img src="assets/images/suspectWidow.png" alt="The Widow" />
+          <canvas class="drip-canvas" width="110" height="80" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">ALIBI: NONE</span>
+        </div>
+        <p class="photo-caption">THE WIDOW</p>
+      </div>
+
+      <!-- Photo: VICTIM -->
+      <div class="darkroom-photo dr-parallax" data-depth="0.06" style="left:55%;top:123px;" id="drphoto-victim">
+        <div class="photo-string"></div>
+        <div class="photo-frame photo-frame--portrait">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <img src="assets/images/victimAlive.png" alt="Victor Ember — last known photo" />
+          <canvas class="drip-canvas" width="90" height="80" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">LAST SEEN ALIVE</span>
+        </div>
+        <p class="photo-caption">VICTIM</p>
+      </div>
+
+      <!-- Clothesline rope 2 -->
+      <div style="position:absolute;top:420px;left:2%;right:2%;height:2px;background:linear-gradient(90deg,transparent,rgba(80,60,30,.6) 5%,rgba(80,60,30,.6) 95%,transparent);z-index:9;" aria-hidden="true"></div>
+
+      <!-- ── ROW 2: MIXED PHOTOS ── -->
+
+      <!-- Photo: BUTLER -->
+      <div class="darkroom-photo dr-parallax" data-depth="0.10" style="left:3%;top:385px;" id="drphoto-butler">
+        <div class="photo-string"></div>
+        <div class="photo-frame">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <img src="assets/images/suspectButler.png" alt="The Butler" />
+          <canvas class="drip-canvas" width="110" height="80" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">HAD THE KEY</span>
+        </div>
+        <p class="photo-caption">THE BUTLER</p>
+      </div>
+
+      <!-- Evidence: FOOTPRINTS -->
+      <div class="darkroom-photo darkroom-photo--evidence dr-parallax" data-depth="0.05" style="left:17%;top:385px;" id="drphoto-footprints">
+        <div class="photo-string photo-string--short"></div>
+        <div class="photo-frame photo-frame--evidence">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <div class="evidence-photo-content">
+            <img src="assets/svg/footprints.svg" alt="" aria-hidden="true" />
+          </div>
+          <canvas class="drip-canvas" width="96" height="60" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">SIZE 11 BOOT</span>
+        </div>
+        <p class="photo-caption">FOOTPRINTS</p>
+      </div>
+
+      <!-- Photo: NEPHEW -->
+      <div class="darkroom-photo dr-parallax" data-depth="0.08" style="left:31%;top:385px;" id="drphoto-nephew">
+        <div class="photo-string"></div>
+        <div class="photo-frame">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <img src="assets/images/suspectNephew.png" alt="The Nephew" />
+          <canvas class="drip-canvas" width="110" height="80" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">6 BLOCKS AWAY</span>
+        </div>
+        <p class="photo-caption">THE NEPHEW</p>
+      </div>
+
+      <!-- Evidence: CIGARETTE -->
+      <div class="darkroom-photo darkroom-photo--evidence dr-parallax" data-depth="0.09" style="left:46%;top:385px;" id="drphoto-cigarette">
+        <div class="photo-string photo-string--short"></div>
+        <div class="photo-frame photo-frame--evidence">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <div class="evidence-photo-content">
+            <img src="assets/svg/cigerette.svg" alt="" aria-hidden="true" />
+          </div>
+          <canvas class="drip-canvas" width="96" height="60" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">MONOGRAM: E</span>
+        </div>
+        <p class="photo-caption">CIGARETTE</p>
+      </div>
+
+      <!-- Evidence: TORN FABRIC -->
+      <div class="darkroom-photo darkroom-photo--evidence dr-parallax" data-depth="0.07" style="left:60%;top:385px;" id="drphoto-fabric">
+        <div class="photo-string photo-string--short"></div>
+        <div class="photo-frame photo-frame--evidence">
+          <div class="photo-clip" aria-hidden="true"></div>
+          <div class="evidence-photo-content">
+            <img src="assets/svg/tornCloth.svg" alt="" aria-hidden="true" />
+          </div>
+          <canvas class="drip-canvas" width="96" height="60" aria-hidden="true"></canvas>
+          <span class="photo-evidence-label">DARK WOOL — GOLD THREAD</span>
+        </div>
+        <p class="photo-caption">TORN FABRIC</p>
+      </div>
+
+      <div class="text-panel" id="ch4-text-panel">
+        <p class="chapter-label">Chapter 04 — The Darkroom</p>
+        <h2 class="chapter-title" id="ch4-title" style="font-size:2rem;">The<br>Darkroom</h2>
+        <p class="chapter-subtitle">CSS Custom Properties</p>
+        <p class="chapter-body" style="font-size:.85rem;">In the basement of the precinct, Sprout hung the photographs to develop. In the red glow of the safelight, shapes emerged slowly from blank white paper — details invisible in the chaos of the crime scene suddenly made sharp and undeniable. A darkroom doesn't create new information; it <em>reveals</em> what was always there.</p>
+        <p class="chapter-body" style="font-size:.85rem;margin-top:8px;"><strong>CSS custom properties</strong> — called CSS variables — work like the controls in that darkroom. You define them once using <code style="color:var(--color-green-term)">--</code> as a prefix, then use them throughout your CSS. The real power arrives when JavaScript reaches in and changes those variables directly. Change one, and every element using it updates instantly, like turning off the light in the darkroom.</p>
+        <div class="code-block" style="font-size:.68rem;">/* Define your variables once: */
+:root {
+  --scene-bg:    #0a0818;
+  --accent-color: #3d7fff;
+}
+
+/* Use them in CSS: */
+body {
+  background: var(--scene-bg);
+}
+
+// JS changes a variable at runtime:
+document.documentElement
+  .style.setProperty(
+    '--scene-bg', '#080005'
+  );
+
+// Read it back:
+getComputedStyle(root)
+  .getPropertyValue('--scene-bg');
+// → '#080005'
+
+// Every element using that
+// variable updates immediately.</div>
+      </div>
+
+    </article>
+
+
+    <!-- ═══ CH 5: CASE FILE — folder close-up only ═══ -->
+    <article class="chapter chapter--5" id="chapter-5" aria-labelledby="ch5-title">
+
+      <!-- Office window city background -->
+      <div id="ch5-office-bg" aria-hidden="true">
+        <!-- Night sky -->
+        <div id="ch5-sky-layer"></div>
+
+        <!-- City skyline buildings -->
+        <div id="ch5-cityscape">
+          <div class="city-bldg" style="left:0%;width:8%;height:55%;background:#0c0a18;">
+            <div class="bldg-win" style="left:20%;top:12%;animation-delay:0s;"></div>
+            <div class="bldg-win" style="left:55%;top:12%;animation-delay:3.2s;"></div>
+            <div class="bldg-win lit" style="left:20%;top:28%;"></div>
+            <div class="bldg-win" style="left:55%;top:28%;animation-delay:7.1s;"></div>
+            <div class="bldg-win" style="left:20%;top:44%;animation-delay:1.5s;"></div>
+            <div class="bldg-win lit" style="left:55%;top:44%;"></div>
+            <div class="bldg-win" style="left:20%;top:60%;animation-delay:5.8s;"></div>
+            <div class="bldg-win" style="left:55%;top:60%;animation-delay:9.3s;"></div>
+          </div>
+          <div class="city-bldg" style="left:7%;width:10%;height:72%;background:#0e0b1e;">
+            <div class="bldg-win lit" style="left:15%;top:8%;"></div>
+            <div class="bldg-win" style="left:45%;top:8%;animation-delay:4.4s;"></div>
+            <div class="bldg-win" style="left:75%;top:8%;animation-delay:2.1s;"></div>
+            <div class="bldg-win" style="left:15%;top:22%;animation-delay:6.7s;"></div>
+            <div class="bldg-win lit" style="left:45%;top:22%;"></div>
+            <div class="bldg-win" style="left:75%;top:22%;animation-delay:0.8s;"></div>
+            <div class="bldg-win" style="left:15%;top:36%;animation-delay:3.9s;"></div>
+            <div class="bldg-win" style="left:45%;top:36%;animation-delay:8.2s;"></div>
+            <div class="bldg-win" style="left:75%;top:36%;animation-delay:1.3s;"></div>
+            <div class="bldg-win lit" style="left:15%;top:50%;"></div>
+            <div class="bldg-win" style="left:45%;top:50%;animation-delay:5.1s;"></div>
+            <div class="bldg-win" style="left:75%;top:50%;animation-delay:10.5s;"></div>
+            <div class="bldg-win" style="left:15%;top:64%;animation-delay:7.8s;"></div>
+            <div class="bldg-win" style="left:45%;top:64%;animation-delay:2.6s;"></div>
+            <div class="bldg-win lit" style="left:75%;top:64%;"></div>
+          </div>
+          <div class="city-bldg" style="left:16%;width:7%;height:48%;background:#100d20;">
+            <div class="bldg-win" style="left:25%;top:15%;animation-delay:4.0s;"></div>
+            <div class="bldg-win lit" style="left:60%;top:15%;"></div>
+            <div class="bldg-win" style="left:25%;top:35%;animation-delay:6.5s;"></div>
+            <div class="bldg-win" style="left:60%;top:35%;animation-delay:1.9s;"></div>
+            <div class="bldg-win" style="left:25%;top:55%;animation-delay:8.6s;"></div>
+            <div class="bldg-win" style="left:60%;top:55%;animation-delay:3.3s;"></div>
+          </div>
+          <div class="city-bldg" style="left:22%;width:9%;height:65%;background:#0b0916;">
+            <div class="bldg-win" style="left:18%;top:10%;animation-delay:2.2s;"></div>
+            <div class="bldg-win" style="left:50%;top:10%;animation-delay:9.1s;"></div>
+            <div class="bldg-win lit" style="left:18%;top:26%;"></div>
+            <div class="bldg-win" style="left:50%;top:26%;animation-delay:5.5s;"></div>
+            <div class="bldg-win" style="left:18%;top:42%;animation-delay:7.3s;"></div>
+            <div class="bldg-win lit" style="left:50%;top:42%;"></div>
+            <div class="bldg-win" style="left:18%;top:58%;animation-delay:0.6s;"></div>
+            <div class="bldg-win" style="left:50%;top:58%;animation-delay:4.2s;"></div>
+          </div>
+          <div class="city-bldg" style="left:30%;width:6%;height:42%;background:#0d0a1a;">
+            <div class="bldg-win lit" style="left:25%;top:18%;"></div>
+            <div class="bldg-win" style="left:60%;top:18%;animation-delay:6.0s;"></div>
+            <div class="bldg-win" style="left:25%;top:42%;animation-delay:3.7s;"></div>
+            <div class="bldg-win" style="left:60%;top:42%;animation-delay:8.9s;"></div>
+            <div class="bldg-win" style="left:25%;top:66%;animation-delay:1.1s;"></div>
+            <div class="bldg-win lit" style="left:60%;top:66%;"></div>
+          </div>
+          <div class="city-bldg" style="left:35%;width:11%;height:80%;background:#0a0814;">
+            <div class="bldg-win" style="left:12%;top:5%;animation-delay:5.3s;"></div>
+            <div class="bldg-win lit" style="left:38%;top:5%;"></div>
+            <div class="bldg-win" style="left:64%;top:5%;animation-delay:2.8s;"></div>
+            <div class="bldg-win" style="left:12%;top:16%;animation-delay:9.7s;"></div>
+            <div class="bldg-win" style="left:38%;top:16%;animation-delay:0.4s;"></div>
+            <div class="bldg-win" style="left:64%;top:16%;animation-delay:6.3s;"></div>
+            <div class="bldg-win lit" style="left:12%;top:27%;"></div>
+            <div class="bldg-win" style="left:38%;top:27%;animation-delay:4.8s;"></div>
+            <div class="bldg-win" style="left:64%;top:27%;animation-delay:11.2s;"></div>
+            <div class="bldg-win" style="left:12%;top:38%;animation-delay:7.6s;"></div>
+            <div class="bldg-win lit" style="left:38%;top:38%;"></div>
+            <div class="bldg-win" style="left:64%;top:38%;animation-delay:1.7s;"></div>
+            <div class="bldg-win" style="left:12%;top:49%;animation-delay:3.5s;"></div>
+            <div class="bldg-win" style="left:38%;top:49%;animation-delay:8.4s;"></div>
+            <div class="bldg-win" style="left:64%;top:49%;animation-delay:10.1s;"></div>
+            <div class="bldg-win" style="left:12%;top:60%;animation-delay:5.9s;"></div>
+            <div class="bldg-win" style="left:38%;top:60%;animation-delay:2.3s;"></div>
+            <div class="bldg-win lit" style="left:64%;top:60%;"></div>
+          </div>
+          <div class="city-bldg" style="left:45%;width:7%;height:50%;background:#0f0c22;">
+            <div class="bldg-win" style="left:22%;top:14%;animation-delay:4.6s;"></div>
+            <div class="bldg-win lit" style="left:58%;top:14%;"></div>
+            <div class="bldg-win" style="left:22%;top:34%;animation-delay:7.9s;"></div>
+            <div class="bldg-win" style="left:58%;top:34%;animation-delay:1.4s;"></div>
+            <div class="bldg-win lit" style="left:22%;top:54%;"></div>
+            <div class="bldg-win" style="left:58%;top:54%;animation-delay:6.2s;"></div>
+          </div>
+          <div class="city-bldg" style="left:51%;width:8%;height:60%;background:#0c0918;">
+            <div class="bldg-win" style="left:20%;top:10%;animation-delay:3.1s;"></div>
+            <div class="bldg-win" style="left:55%;top:10%;animation-delay:8.7s;"></div>
+            <div class="bldg-win lit" style="left:20%;top:25%;"></div>
+            <div class="bldg-win" style="left:55%;top:25%;animation-delay:5.4s;"></div>
+            <div class="bldg-win" style="left:20%;top:40%;animation-delay:0.9s;"></div>
+            <div class="bldg-win" style="left:55%;top:40%;animation-delay:10.8s;"></div>
+            <div class="bldg-win" style="left:20%;top:55%;animation-delay:7.0s;"></div>
+            <div class="bldg-win lit" style="left:55%;top:55%;"></div>
+          </div>
+          <div class="city-bldg" style="left:58%;width:10%;height:75%;background:#0d0b1c;">
+            <div class="bldg-win" style="left:15%;top:7%;animation-delay:2.5s;"></div>
+            <div class="bldg-win" style="left:45%;top:7%;animation-delay:6.8s;"></div>
+            <div class="bldg-win lit" style="left:75%;top:7%;"></div>
+            <div class="bldg-win" style="left:15%;top:20%;animation-delay:9.4s;"></div>
+            <div class="bldg-win lit" style="left:45%;top:20%;"></div>
+            <div class="bldg-win" style="left:75%;top:20%;animation-delay:4.1s;"></div>
+            <div class="bldg-win" style="left:15%;top:33%;animation-delay:0.3s;"></div>
+            <div class="bldg-win" style="left:45%;top:33%;animation-delay:7.5s;"></div>
+            <div class="bldg-win" style="left:75%;top:33%;animation-delay:3.6s;"></div>
+            <div class="bldg-win lit" style="left:15%;top:46%;"></div>
+            <div class="bldg-win" style="left:45%;top:46%;animation-delay:5.7s;"></div>
+            <div class="bldg-win" style="left:75%;top:46%;animation-delay:11.0s;"></div>
+            <div class="bldg-win" style="left:15%;top:59%;animation-delay:2.0s;"></div>
+            <div class="bldg-win lit" style="left:45%;top:59%;"></div>
+            <div class="bldg-win" style="left:75%;top:59%;animation-delay:8.1s;"></div>
+          </div>
+          <div class="city-bldg" style="left:67%;width:6%;height:45%;background:#100d22;">
+            <div class="bldg-win lit" style="left:25%;top:16%;"></div>
+            <div class="bldg-win" style="left:60%;top:16%;animation-delay:5.0s;"></div>
+            <div class="bldg-win" style="left:25%;top:40%;animation-delay:9.6s;"></div>
+            <div class="bldg-win" style="left:60%;top:40%;animation-delay:2.9s;"></div>
+            <div class="bldg-win" style="left:25%;top:64%;animation-delay:7.4s;"></div>
+            <div class="bldg-win lit" style="left:60%;top:64%;"></div>
+          </div>
+          <div class="city-bldg" style="left:72%;width:9%;height:68%;background:#0b0916;">
+            <div class="bldg-win" style="left:18%;top:9%;animation-delay:3.8s;"></div>
+            <div class="bldg-win lit" style="left:50%;top:9%;"></div>
+            <div class="bldg-win" style="left:82%;top:9%;animation-delay:6.4s;"></div>
+            <div class="bldg-win" style="left:18%;top:23%;animation-delay:1.6s;"></div>
+            <div class="bldg-win" style="left:50%;top:23%;animation-delay:10.3s;"></div>
+            <div class="bldg-win lit" style="left:82%;top:23%;"></div>
+            <div class="bldg-win" style="left:18%;top:37%;animation-delay:8.0s;"></div>
+            <div class="bldg-win" style="left:50%;top:37%;animation-delay:4.5s;"></div>
+            <div class="bldg-win" style="left:82%;top:37%;animation-delay:0.7s;"></div>
+            <div class="bldg-win lit" style="left:18%;top:51%;"></div>
+            <div class="bldg-win" style="left:50%;top:51%;animation-delay:5.2s;"></div>
+            <div class="bldg-win" style="left:82%;top:51%;animation-delay:9.8s;"></div>
+          </div>
+          <div class="city-bldg" style="left:80%;width:8%;height:52%;background:#0e0b1e;">
+            <div class="bldg-win" style="left:20%;top:12%;animation-delay:2.7s;"></div>
+            <div class="bldg-win lit" style="left:55%;top:12%;"></div>
+            <div class="bldg-win" style="left:20%;top:30%;animation-delay:7.2s;"></div>
+            <div class="bldg-win" style="left:55%;top:30%;animation-delay:4.3s;"></div>
+            <div class="bldg-win lit" style="left:20%;top:48%;"></div>
+            <div class="bldg-win" style="left:55%;top:48%;animation-delay:0.2s;"></div>
+            <div class="bldg-win" style="left:20%;top:66%;animation-delay:6.1s;"></div>
+            <div class="bldg-win" style="left:55%;top:66%;animation-delay:10.6s;"></div>
+          </div>
+          <div class="city-bldg" style="left:87%;width:14%;height:62%;background:#0c0a18;">
+            <div class="bldg-win lit" style="left:12%;top:10%;"></div>
+            <div class="bldg-win" style="left:40%;top:10%;animation-delay:5.6s;"></div>
+            <div class="bldg-win" style="left:68%;top:10%;animation-delay:3.4s;"></div>
+            <div class="bldg-win" style="left:12%;top:25%;animation-delay:8.3s;"></div>
+            <div class="bldg-win lit" style="left:40%;top:25%;"></div>
+            <div class="bldg-win" style="left:68%;top:25%;animation-delay:1.2s;"></div>
+            <div class="bldg-win" style="left:12%;top:40%;animation-delay:6.9s;"></div>
+            <div class="bldg-win" style="left:40%;top:40%;animation-delay:4.7s;"></div>
+            <div class="bldg-win lit" style="left:68%;top:40%;"></div>
+            <div class="bldg-win" style="left:12%;top:55%;animation-delay:2.4s;"></div>
+            <div class="bldg-win" style="left:40%;top:55%;animation-delay:9.0s;"></div>
+            <div class="bldg-win" style="left:68%;top:55%;animation-delay:0.5s;"></div>
+          </div>
+        </div>
+
+        <!-- Rain overlay -->
+        <div id="ch5-rain"></div>
+
+        <!-- Office window frame overlay -->
+        <div id="ch5-window-frame">
+          <div class="window-mullion window-mullion--v" style="left:33.3%"></div>
+          <div class="window-mullion window-mullion--v" style="left:66.6%"></div>
+          <div class="window-mullion window-mullion--h" style="top:50%"></div>
+        </div>
+
+        <!-- Desk surface at bottom -->
+        <div id="ch5-desk-surface"></div>
+      </div>
+
+      <!-- THE FOLDER — large, centered, close-up in your face -->
+      <div id="folder-system" role="region" aria-label="Case file folder">
+
+        <div id="folder-tabs">
+          <button type="button" class="folder-tab active" data-tab="overview">📋 OVERVIEW</button>
+          <button type="button" class="folder-tab" data-tab="evidence">🔍 EVIDENCE</button>
+          <button type="button" class="folder-tab" data-tab="suspects">👥 SUSPECTS</button>
+          <button type="button" class="folder-tab" data-tab="storage">💾 STORAGE</button>
+        </div>
+
+        <div id="folder-body">
+
+          <div class="folder-page active" id="fpage-overview">
+            <div class="folder-stamp">CLASSIFIED</div>
+            <div class="folder-meta">
+              <span class="folder-casenum">CASE #4471</span>
+              <span class="folder-date">NOV 14 · 2:17 AM</span>
+            </div>
+            <h2 class="folder-title">THE RENDER MURDERS</h2>
+            <div class="folder-divider"></div>
+            <div class="folder-row"><span class="flabel">VICTIM</span><span class="fval">Victor Ember Sr., 68</span></div>
+            <div class="folder-row"><span class="flabel">WEAPON</span><span class="fval">.38 Revolver, unregistered</span></div>
+            <div class="folder-row"><span class="flabel">SCENE</span><span class="fval">East Alley, Club Noir</span></div>
+            <div class="folder-row"><span class="flabel">MOTIVE</span><span class="fval">$4.2M estate</span></div>
+            <div class="folder-row"><span class="flabel">STATUS</span><span class="fval" style="color:#8b0000;font-weight:bold;">OPEN</span></div>
+            <div class="folder-divider" style="margin-top:10px;"></div>
+            <p style="font-size:.72rem;color:#3d1a00;line-height:1.75;font-family:var(--font-display);margin-top:8px;">Every detective knows the nightmare scenario: you step out for an hour, come back, and the precinct has been cleared out. Evidence scattered. Notes gone. Three days of work vanished like smoke. That's why Sprout kept a locked case file — every confession, every data point logged in a book that survived the night.</p>
+            <p style="font-size:.72rem;color:#5c2800;line-height:1.75;font-family:var(--font-display);margin-top:6px;">A web page, by default, has no memory. Reload it, and everything you've done is gone. The Evidence and Suspects tabs update as you investigate. The Memory tab explains how your progress is saved in <strong>localStorage</strong> — so closing this tab won't erase what you've found.</p>
+          </div>
+
+          <div class="folder-page" id="fpage-evidence">
+            <div class="folder-stamp">EVIDENCE</div>
+            <div class="folder-row" style="margin-bottom:10px;">
+              <span class="flabel">CLUES FOUND</span>
+              <span class="fval"><span id="saved-clues" style="font-size:1.5rem;color:#8b0000;font-weight:bold;">—</span> / 5</span>
+            </div>
+            <div id="ev-list">
+              <div class="ev-item" id="ev-0">👣 Footprints — Size 11 boot, deep heel strike</div>
+              <div class="ev-item" id="ev-1">🔍 Shell Casing — .38 cal, no serial number</div>
+              <div class="ev-item" id="ev-2">🎴 Matchbook — Club Noir, Room 7 written inside</div>
+              <div class="ev-item" id="ev-3">🚬 Cigarette — expensive brand, monogram E.</div>
+              <div class="ev-item" id="ev-4">🧵 Fabric — dark wool blend, gold button thread</div>
+            </div>
+            <p style="font-size:.6rem;color:#8b5020;margin-top:8px;font-style:italic;">Items struck through as discovered in Chapter 1</p>
+          </div>
+
+          <div class="folder-page" id="fpage-suspects">
+            <div class="folder-stamp">SUSPECTS</div>
+            <div class="folder-row" style="margin-bottom:8px;">
+              <span class="flabel">INTERROGATED</span>
+              <span class="fval"><span id="saved-suspects" style="font-size:1.5rem;color:#8b0000;font-weight:bold;">—</span> / 4</span>
+            </div>
+            <div class="sus-row" id="sus-doctor"><img src="assets/images/suspectDoctor.png" alt="Dr. VUE"/><div><strong>DR. VUE</strong><br><span>Blackmail. $800K malpractice cover-up motive.</span></div></div>
+            <div class="sus-row" id="sus-widow"><img src="assets/images/suspectWidow.png" alt="Widow"/><div><strong>THE WIDOW</strong><br><span>$4.2M sole heir. Filed for divorce, then withdrew.</span></div></div>
+            <div class="sus-row" id="sus-butler"><img src="assets/images/suspectButler.png" alt="Butler"/><div><strong>THE BUTLER</strong><br><span>Only key to east exit. Dismissed 3 days prior.</span></div></div>
+            <div class="sus-row" id="sus-nephew"><img src="assets/images/suspectNephew.png" alt="Nephew"/><div><strong>THE NEPHEW</strong><br><span>Disinherited. $180K debt. Cigarette monogram: E.</span></div></div>
+          </div>
+
+          <div class="folder-page" id="fpage-storage">
+            <div class="folder-stamp">MEMORY</div>
+            <h3 style="font-family:var(--font-display);font-size:.95rem;color:#1a0a00;margin-bottom:8px;">THE FILING CABINET: localStorage</h3>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>What it is:</strong> localStorage is a key-value store built into every browser. Unlike regular JavaScript variables — which disappear when the page closes — localStorage data persists on the user's device indefinitely, until the user clears their browser data or you explicitly delete it.</p>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>Why it matters:</strong> localStorage lets you build experiences that remember users — saved settings, game progress, shopping carts, form drafts, dark/light mode preferences. It holds up to ~5MB per domain and needs no server or login.</p>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>The catch:</strong> Everything stored is a string. To store objects or arrays, use <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.stringify()</code> to write and <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.parse()</code> to read them back.</p>
+            <div class="storage-code">
+              <div><span class="sc-comment">// Save evidence to the case file:</span></div>
+              <div>localStorage.<span class="sc-fn">setItem</span>(<span class="sc-str">'clues'</span>, cluesFound);</div>
+              <div>localStorage.<span class="sc-fn">setItem</span>(<span class="sc-str">'suspect'</span>, <span class="sc-str">'The Butler'</span>);</div>
+              <div style="margin-top:4px;"><span class="sc-comment">// Retrieve it later (even after reload):</span></div>
+              <div>localStorage.<span class="sc-fn">getItem</span>(<span class="sc-str">'clues'</span>); <span class="sc-comment">// → "3"</span></div>
+              <div style="margin-top:4px;"><span class="sc-comment">// Store an object — convert first:</span></div>
+              <div>localStorage.<span class="sc-fn">setItem</span>(<span class="sc-str">'case'</span>,</div>
+              <div>&nbsp;&nbsp;JSON.<span class="sc-fn">stringify</span>({ clues: <span class="sc-num">3</span>, confirmed: <span class="sc-num">true</span> }));</div>
+              <div style="margin-top:4px;"><span class="sc-comment">// Read it back as an object:</span></div>
+              <div>const notes = JSON.<span class="sc-fn">parse</span>(</div>
+              <div>&nbsp;&nbsp;localStorage.<span class="sc-fn">getItem</span>(<span class="sc-str">'case'</span>));</div>
+              <div style="margin-top:4px;"><span class="sc-comment">// Remove a key:</span></div>
+              <div>localStorage.<span class="sc-fn">removeItem</span>(<span class="sc-str">'clues'</span>);</div>
+            </div>
+            <div style="margin-top:10px;">
+              <button type="button" id="save-btn">💾 SAVE CASE</button>
+              <button type="button" id="load-btn">📂 RELOAD</button>
+            </div>
+            <div id="storage-status" aria-live="polite"></div>
+          </div>
+          <!-- padding so nav dots don't cover bottom -->
+          <div style="height:50px;"></div>
+
+        </div>
+      </div>
+
+      <div id="ch5-label">
+        <p class="chapter-label">Chapter 05 — The Memory</p>
+        <h2 class="chapter-title" id="ch5-title">The Filing Cabinet</h2>
+        <p class="chapter-subtitle">localStorage</p>
+      </div>
+
+    </article>
+
+    <!-- ═══ CH 6: CASE CLOSED ═══ -->
+    <article class="chapter chapter--6" id="chapter-6" aria-labelledby="ch6-title">
+      <div id="case-closed-panel">
+        <p class="chapter-label">Chapter 06 — Case Closed</p>
+        <h2 class="chapter-title" id="ch6-title">Case Closed</h2>
+        <p class="chapter-subtitle">The City Never Sleeps</p>
+        <div class="case-typed-wrap">
+          <p class="case-typed" data-typed-text="Sprout lit a cigarette and looked at the board one last time. Variables held the facts. Event listeners caught every reaction. Data attributes exposed what was hidden. CSS variables changed the light when truth needed to be seen. And the case file never forgot."></p>
+          <p class="case-typed" data-typed-text="Without JavaScript, a webpage is a photograph: static, silent, and frozen. JavaScript makes it listen, react, remember, and transform."></p>
+          <p class="case-typed case-red-neon" data-typed-text="The killer was never the point. The system was."></p>
+          <span class="case-typing-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </article>
+
+
+  </div><!-- /scroll-track -->
+  </div><!-- /scroll-wrapper -->
+
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
