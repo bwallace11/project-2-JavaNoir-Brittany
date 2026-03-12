@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="styles/animations.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollSmoother.min.js"></script>
 </head>
 <body>
 
@@ -23,7 +24,8 @@
   <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Story progress"></div>
 
   <nav id="chapter-nav" aria-label="Chapter navigation">
-    <button type="button" class="nav-dot active" aria-label="Go to Chapter 1: The Alley" aria-current="step"></button>
+    <button type="button" class="nav-dot active" aria-label="Go to Case Briefing" aria-current="step"></button>
+    <button type="button" class="nav-dot" aria-label="Go to Chapter 1: The Alley"></button>
     <button type="button" class="nav-dot" aria-label="Go to Chapter 2: The Room Reacts"></button>
     <button type="button" class="nav-dot" aria-label="Go to Chapter 3: The Crime Board"></button>
     <button type="button" class="nav-dot" aria-label="Go to Chapter 4: The Darkroom"></button>
@@ -68,6 +70,9 @@
       </svg>
     </span>
   </div>
+
+  <div id="smooth-wrapper">
+  <div id="smooth-content">
 
   <!-- ═══════════════════════════════════════
        INTRO SCENE — Dark Alley Murder
@@ -233,23 +238,23 @@
         border-radius:50%;transform:skewX(-20deg);filter:blur(1px);"></div>
     </div>
 
-    <div id="intro-title" style="position:absolute;top:28px;left:36px;z-index:50;opacity:0;">
+    <div id="intro-title" data-speed="0.85" style="position:absolute;top:28px;left:36px;z-index:50;opacity:0;">
       <p style="font-family:var(--font-ui);font-size:.63rem;letter-spacing:.3em;color:var(--color-smoke);text-transform:uppercase;">A JavaScript Mystery</p>
       <h1 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);color:var(--color-white);line-height:1.05;margin-top:6px;">JAVA<br>NOIR</h1>
     </div>
 
-    <div id="parallax-chars" style="position:absolute;inset:0;z-index:20;pointer-events:none;">
+    <div id="parallax-chars" data-speed="1.15" style="position:absolute;inset:0;z-index:20;pointer-events:none;">
        <img id="intro-murderer" src="assets/images/murderer.png" alt="A shadowy figure approaches"
-         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:pixelated;display:none;" />
+         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;display:none;" />
        <img id="intro-shooting" src="assets/images/murdererShooting.png" alt="The figure fires a gun"
-         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:pixelated;display:none;" />
+         style="position:absolute;bottom:0;height:360px;left:14%;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;display:none;" />
        <img id="intro-victim" src="assets/images/victimAlive.png" alt="A man unaware of danger"
-         style="position:absolute;bottom:0;height:384px;right:22%;image-rendering:pixelated;" />
+         style="position:absolute;bottom:0;height:384px;right:22%;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;" />
        <img id="intro-victim-dead" src="assets/images/victimDead.png" alt="The man collapsed"
-         style="position:absolute;bottom:0;height:384px;width:auto;max-width:384px;object-fit:contain;right:22%;image-rendering:pixelated;display:none;" />
+         style="position:absolute;bottom:0;height:384px;width:auto;max-width:384px;object-fit:contain;right:22%;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;display:none;" />
     </div>
 
-    <button type="button" id="continue-prompt" aria-label="Begin investigating">
+    <button type="button" id="continue-prompt" data-lag="0.15" aria-label="Begin investigating">
       <span class="continue-title anim-flicker">PRESS TO CONTINUE</span>
       <span class="continue-copy">Help solve the murder.</span>
       <span class="continue-note">↓ Open DevTools (F12) — the case talks back</span>
@@ -265,6 +270,47 @@
   <div id="scroll-track">
 
 
+    <!-- ═══ NOTEBOOK INTRO ═══ -->
+    <article class="chapter chapter--notebook" id="chapter-notebook" aria-label="Detective's notebook — case briefing">
+      <!-- Flashing police lights -->
+      <div class="police-lights" aria-hidden="true">
+        <div class="police-light police-light--red"></div>
+        <div class="police-light police-light--blue"></div>
+      </div>
+
+      <!-- Crime scene tape — top -->
+      <div class="crime-tape crime-tape--top" aria-hidden="true">
+        <span>CRIME SCENE DO NOT CROSS</span>
+        <span>CRIME SCENE DO NOT CROSS</span>
+        <span>CRIME SCENE DO NOT CROSS</span>
+      </div>
+      <!-- Crime scene tape — bottom -->
+      <div class="crime-tape crime-tape--bottom" aria-hidden="true">
+        <span>CRIME SCENE DO NOT CROSS</span>
+        <span>CRIME SCENE DO NOT CROSS</span>
+        <span>CRIME SCENE DO NOT CROSS</span>
+      </div>
+
+      <!-- Notebook -->
+      <div id="detective-notebook">
+        <div class="notebook-spiral" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span>
+        </div>
+        <div class="notebook-page">
+          <p class="notebook-header">CASE #4471 — EMBER HOMICIDE</p>
+          <hr class="notebook-rule" />
+          <p class="notebook-body">The rain hadn't let up in three days. Detective Sprout ducked under the yellow tape and stepped into the street where Victor Ember had been found face-down in his own blood. The first rule of any investigation is simple: <em>write everything down.</em> Every detail matters, even the ones that seem small. You don't solve a case from memory — you solve it from evidence.</p>
+          <div class="notebook-doodle" aria-hidden="true">
+            <svg viewBox="0 0 60 60" width="48" height="48"><circle cx="30" cy="30" r="28" fill="none" stroke="rgba(120,40,40,.25)" stroke-width="1.5"/><text x="30" y="35" text-anchor="middle" font-size="11" fill="rgba(120,40,40,.35)" font-family="var(--font-display)">?</text></svg>
+          </div>
+          <p class="notebook-footer">— Det. Sprout, night shift</p>
+        </div>
+      </div>
+    </article>
+
+
     <!-- ═══ CH 1: THE ALLEY ═══ -->
     <article class="chapter chapter--1" id="chapter-1" aria-labelledby="ch1-title">
 
@@ -277,7 +323,7 @@
       <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to top,#03020a,transparent);z-index:4;pointer-events:none;" aria-hidden="true"></div>
 
        <img src="assets/images/detective.png" alt="Detective with flashlight"
-         style="position:absolute;bottom:0;left:26%;height:280px;image-rendering:pixelated;z-index:25;filter:drop-shadow(4px 0 15px rgba(61,127,255,.4));transform:scaleX(-1);" />
+         style="position:absolute;bottom:0;left:26%;height:280px;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;z-index:25;filter:drop-shadow(4px 0 15px rgba(61,127,255,.4));transform:scaleX(-1);" />
 
       <!-- 5 clues — external SVG evidence icons from assets/svg -->
       <button type="button" class="clue-item" style="bottom:34%;left:57%;"
@@ -326,26 +372,28 @@
       </div>
 
       <div class="text-panel text-panel--left text-panel--top" id="ch1-text-panel" style="z-index:35;">
-        <p class="chapter-label ch1-slam-item">Chapter 01 — Evidence Collection</p>
+        <p class="chapter-label ch1-slam-item">Chapter 01 — First Contact</p>
         <h2 class="chapter-title ch1-slam-item" id="ch1-title">The Alley</h2>
         <p class="chapter-subtitle ch1-slam-item">console.log · let · const</p>
-        <p class="chapter-body">The rain hadn't let up in three days. Detective Sprout ducked under the yellow tape and stepped into the street where Victor Ember had been found face-down in his own blood. The first rule of any investigation is simple: <em>write everything down.</em> Every detail matters, even the ones that seem small. You don't solve a case from memory  you solve it from evidence.</p>
-        <p class="chapter-body" style="margin-top:10px;">In JavaScript, a <strong>variable</strong> is your notepad. <code style="color:var(--color-green-term)">const</code> is like a photograph sealed in an evidence bag. Once it's in there, it doesn't change. <code style="color:var(--color-green-term)">let</code> is a sticky note you can update. And <code style="color:var(--color-green-term)">console.log()</code> is your flashlight — it opens the notepad and reads out what's inside.</p>
-        <div class="code-block">// const — sealed evidence, never changes:
+        <p class="chapter-body" style="margin-top:10px;"><strong>First Contact — console.log &amp; DevTools.</strong> Before you can investigate, you need a way to <em>see</em> what's happening. Open your browser's DevTools (press F12) and look at the Console tab. That's where <code style="color:var(--color-green-term)">console.log()</code> sends its messages — your flashlight into the code. Every clue you click on this page logs a message there. That's your first contact with JavaScript: you write a line, and the machine talks back.</p>
+        <div class="code-block">// First Contact — open DevTools (F12):
+console.log("Case opened.");
+console.log("Victim:", "Victor Ember");
+console.log("Clues found:", 0);
+// Check the Console tab — it replies.</div>
+        <p class="chapter-body" style="margin-top:10px;"><strong>Naming Things — let &amp; const.</strong> Now that you can see the output, you need somewhere to <em>store</em> facts. In JavaScript, a <strong>variable</strong> is your notepad. <code style="color:var(--color-green-term)">const</code> is like a photograph sealed in an evidence bag — once it's in there, it doesn't change. <code style="color:var(--color-green-term)">let</code> is a sticky note you can update as the case unfolds. Name your evidence, lock down what's certain, and keep the rest flexible.</p>
+        <div class="code-block">// Naming Things — let vs const:
 const victimName = "Victor Ember";
-
-// let — may change as the case develops:
 let suspectCount = 4;
-let timeOfDeath  = "11:42 PM";
 
-// console.log reads it back to you:
-console.log(victimName);   // "Victor Ember"
-console.log(suspectCount); // 4
+// const can't be reassigned:
+// victimName = "Jane"; // ERROR!
 
-// As the case develops, update a let:
+// let can change as the case develops:
 suspectCount = 3;
 console.log(suspectCount); // 3 — one cleared</div>
         <p class="metaphor-line">"The case talks back to me."</p>
+        <p class="chapter-body" style="margin-top:10px;font-size:.78rem;opacity:.7;">But naming the evidence is only half the job. Next, you have to see how the suspects <em>react</em> under pressure.</p>
       </div>
 
     </article>
@@ -406,27 +454,41 @@ console.log(suspectCount); // 3 — one cleared</div>
         </div>
       </div>
 
-      <div class="text-panel text-panel--right text-panel--top" style="z-index:35;max-width:450px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:28px 32px;">
+      <div class="text-panel text-panel--right text-panel--top" style="z-index:35;max-width:420px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:22px 24px;">
         <p class="chapter-label">Chapter 02 — The Interrogation Room</p>
         <h2 class="chapter-title" id="ch2-title">The Room<br>Reacts</h2>
-        <p class="chapter-subtitle">addEventListener · classList</p>
-        <p class="chapter-body" style="font-size:.87rem;">Sprout lined up the suspects in the cold fluorescent light. Each one gave nothing away. Until you <em>applied pressure.</em> A good detective doesn't just observe the room, he creates reactions and reads them. JavaScript works the same way. An <strong>event listener</strong> watches for something to happen, a click, a keypress, and then runs a piece of code in response.</p>
-        <p class="chapter-body" style="font-size:.87rem;margin-top:10px;">When a reaction occurs, you often need to visibly <em>change</em> something on the page. That's <code style="color:var(--color-green-term)">classList</code>. With <code style="color:var(--color-green-term)">classList.toggle()</code>, JavaScript can swap CSS classes in and out like swapping a suspect's expression under pressure, revealing what was always underneath.</p>
-        <div class="code-block" style="font-size:.7rem;">const suspect = document.querySelector(
+        <p class="chapter-subtitle">addEventListener · classList · conditionals</p>
+        <p class="chapter-body" style="font-size:.87rem;"><strong>Listening.</strong> Sprout lined up the suspects in the cold fluorescent light. Each one gave nothing away — until you <em>applied pressure.</em> A good detective doesn't just observe; he creates reactions and reads them. In JavaScript, an <strong>event listener</strong> watches for something specific to happen — a click, a keypress, a hover — and fires a block of code in response. Without listeners, a page just sits there. With them, it <em>listens.</em></p>
+        <div class="code-block" style="font-size:.7rem;">// Listening — addEventListener:
+const lamp = document.querySelector(
+  '#lamp-toggle-btn'
+);
+
+// Watch for a click:
+lamp.addEventListener('click',
+  function() {
+    console.log('Light toggled.');
+  }
+);
+// Now every click runs that code.</div>
+        <p class="chapter-body" style="font-size:.87rem;margin-top:10px;"><strong>The Switch.</strong> When a reaction occurs, you need to make a <em>decision.</em> That's a <strong>conditional</strong> — an <code style="color:var(--color-green-term)">if/else</code> block that checks a condition and runs different code depending on the answer. Combined with <code style="color:var(--color-green-term)">classList</code>, you can swap CSS classes on and off like flipping a suspect's demeanor under pressure. <code style="color:var(--color-green-term)">classList.add()</code> pins a label on. <code style="color:var(--color-green-term)">classList.remove()</code> tears one off. <code style="color:var(--color-green-term)">classList.toggle()</code> flips it. And <code style="color:var(--color-green-term)">classList.contains()</code> checks if it's there at all.</p>
+        <div class="code-block" style="font-size:.7rem;">// The Switch — conditionals + classList:
+const card = document.querySelector(
   '.suspect-card'
 );
 
-// Watch for a click — like slamming
-// a folder on the table:
-suspect.addEventListener('click',
-  function() {
-    // Toggle 'nervous' class on/off:
-    suspect.classList.toggle('nervous');
-  }
-);
+card.addEventListener('click', () => {
+  card.classList.toggle('interrogated');
 
-// In your CSS, .nervous might turn
-// the card red or shake it.</div>
+  // The conditional — check and decide:
+  if (card.classList.contains(
+      'interrogated')) {
+    console.log('Story changes.');
+  } else {
+    console.log('Still hiding.');
+  }
+});</div>
+        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">Reactions are fleeting. To build the full picture, Sprout needed to connect the dots — a web of hidden data only the evidence itself could reveal.</p>
       </div>
 
     </article>
@@ -434,6 +496,19 @@ suspect.addEventListener('click',
 
     <!-- ═══ CH 3: CRIME BOARD ═══ -->
     <article class="chapter chapter--3" id="chapter-3" aria-labelledby="ch3-title">
+
+      <!-- Showpiece step indicators — appear during scroll-driven sequence -->
+      <div id="showpiece-steps" aria-hidden="true" style="position:absolute;top:12px;right:14px;z-index:12;font-family:var(--font-ui);font-size:.52rem;letter-spacing:.25em;text-transform:uppercase;pointer-events:none;">
+        <div class="showpiece-step" id="sp-step-1" style="color:var(--color-smoke);opacity:0;margin-bottom:4px;">STEP 1 — EVIDENCE APPEARS</div>
+        <div class="showpiece-step" id="sp-step-2" style="color:var(--color-blue-neon);opacity:0;margin-bottom:4px;">STEP 2 — CONNECTIONS FORM</div>
+        <div class="showpiece-step" id="sp-step-3" style="color:var(--color-red-neon);opacity:0;">STEP 3 — SUSPECT REVEALED</div>
+      </div>
+
+      <!-- Red string SVG overlay — drawn during step 2 -->
+      <svg id="showpiece-strings" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;opacity:0;" aria-hidden="true"></svg>
+
+      <!-- Suspect highlight ring — glows around a suspect photo during step 3 -->
+      <div id="suspect-highlight" aria-hidden="true" style="position:absolute;z-index:7;width:140px;height:140px;border:2px solid var(--color-red-neon);border-radius:50%;box-shadow:0 0 18px var(--color-red-neon),inset 0 0 12px rgba(255,51,51,.15);pointer-events:none;opacity:0;left:78%;bottom:11%;transform:translate(-50%,-50%) scale(0.5);"></div>
 
       <div id="corkboard" role="region" aria-label="Evidence corkboard">
 
@@ -517,12 +592,12 @@ suspect.addEventListener('click',
         </div>
 
         <!-- Text panel INSIDE corkboard so strings can connect to it -->
-        <div class="text-panel" id="ch3-text-panel" style="position:absolute;top:50%;left:50%;transform:translate(-50%, -50%) rotate(-1deg);z-index:7;background:rgba(3,2,10,.92);border:1px solid rgba(61,127,255,.15);padding:22px 26px;max-width:420px;pointer-events:none;">
+        <div class="text-panel" id="ch3-text-panel" style="position:absolute;bottom:4%;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:7;background:rgba(3,2,10,.92);border:1px solid rgba(61,127,255,.15);padding:18px 22px;max-width:440px;pointer-events:none;">
           <div class="pin" style="background:var(--color-blue-neon);box-shadow:0 0 8px var(--color-blue-neon);"></div>
           <p class="chapter-label">Chapter 03 — The Crime Web</p>
           <h2 class="chapter-title" id="ch3-title" style="font-size:1.4rem;">The Crime<br>Board</h2>
           <p class="chapter-subtitle" style="font-size:.87rem;">data-* attributes</p>
-          <p class="chapter-body" style="font-size:.79rem;">Back at the precinct, Sprout covered an entire wall with photographs and string. Every piece of evidence had <em>hidden information</em> attached to it, invisible until you knew how to look. HTML elements work the same way. <strong>Data attributes</strong> let you attach extra details directly to an element using <code style="color:var(--color-green-term)">data-</code> as a prefix — invisible to the user but readable by JavaScript.</p>
+          <p class="chapter-body" style="font-size:.79rem;">Back at the precinct, Sprout covered an entire wall with photographs and string. Every piece of evidence had <em>hidden information</em> attached to it — invisible until you knew how to look. A photograph of the butler doesn't just show a face; flip it over and there's a name, a time stamp, a location. HTML elements work the same way. <strong>Data attributes</strong> let you attach extra details directly to an element using <code style="color:var(--color-green-term)">data-</code> as a prefix — invisible to the user but readable by JavaScript through the <code style="color:var(--color-green-term)">dataset</code> object. Click the cards and photos on this board to watch the web form.</p>
           <div class="code-block" style="font-size:.65rem;">&lt;div data-suspect="butler"
      data-location="east-wing"&gt;
   Torn jacket fibre
@@ -538,8 +613,9 @@ card.dataset.location
 // Use it to trigger logic:
 if (card.dataset.suspect
     === 'butler') {
-  // Add to shortlist
+  console.log('Shortlisted.');
 }</div>
+          <p class="chapter-body" style="font-size:.72rem;margin-top:8px;opacity:.7;">The web was coming together. But some evidence couldn't be read in daylight — it needed a different kind of light to develop.</p>
         </div>
       </div>
 
@@ -711,18 +787,18 @@ if (card.dataset.suspect
       </div>
 
       <div class="text-panel" id="ch4-text-panel">
-        <p class="chapter-label">Chapter 04 — The Darkroom</p>
+        <p class="chapter-label">Chapter 04 — The System</p>
         <h2 class="chapter-title" id="ch4-title" style="font-size:2rem;">The<br>Darkroom</h2>
-        <p class="chapter-subtitle">CSS Custom Properties</p>
-        <p class="chapter-body" style="font-size:.85rem;">In the basement of the precinct, Sprout hung the photographs to develop. In the red glow of the safelight, shapes emerged slowly from blank white paper — details invisible in the chaos of the crime scene suddenly made sharp and undeniable. A darkroom doesn't create new information; it <em>reveals</em> what was always there.</p>
-        <p class="chapter-body" style="font-size:.85rem;margin-top:8px;"><strong>CSS custom properties</strong> — called CSS variables — work like the controls in that darkroom. You define them once using <code style="color:var(--color-green-term)">--</code> as a prefix, then use them throughout your CSS. The real power arrives when JavaScript reaches in and changes those variables directly. Change one, and every element using it updates instantly, like turning off the light in the darkroom.</p>
-        <div class="code-block" style="font-size:.68rem;">/* Define your variables once: */
+        <p class="chapter-subtitle">CSS Custom Properties · Design Tokens</p>
+        <p class="chapter-body" style="font-size:.85rem;">In the basement of the precinct, Sprout hung the photographs to develop. In the red glow of the safelight, shapes emerged slowly from blank white paper — details invisible in the chaos of the crime scene suddenly made sharp and undeniable. A darkroom doesn't create new information; it <em>reveals</em> what was always there. The detective controlled the process with two dials: the duration of the chemical bath and the intensity of the light. Turn one dial, and the entire room transforms.</p>
+        <p class="chapter-body" style="font-size:.85rem;margin-top:8px;"><strong>CSS custom properties</strong> — called CSS variables — work like those dials. You define them once using <code style="color:var(--color-green-term)">--</code> as a prefix, then reference them throughout your CSS with <code style="color:var(--color-green-term)">var()</code>. The real power arrives when JavaScript reaches in and changes those variables at runtime. Change one value, and every element using it updates instantly — like flipping the light switch in this very room. Toggle the switch above and watch the scene transform: background, glow, color temperature — all from changing two custom properties.</p>
+        <div class="code-block" style="font-size:.68rem;">/* The System — define tokens once: */
 :root {
   --scene-bg:    #0a0818;
   --accent-color: #3d7fff;
 }
 
-/* Use them in CSS: */
+/* Every element reads from them: */
 body {
   background: var(--scene-bg);
 }
@@ -738,8 +814,9 @@ getComputedStyle(root)
   .getPropertyValue('--scene-bg');
 // → '#080005'
 
-// Every element using that
-// variable updates immediately.</div>
+// One source of truth. Change it,
+// and everything updates instantly.</div>
+        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">The photos were developed. The evidence was visible. But Sprout had learned the hard way — if you don't write it down, it vanishes. The case needed a filing cabinet.</p>
       </div>
 
     </article>
@@ -952,7 +1029,7 @@ getComputedStyle(root)
             <div class="folder-row"><span class="flabel">STATUS</span><span class="fval" style="color:#8b0000;font-weight:bold;">OPEN</span></div>
             <div class="folder-divider" style="margin-top:10px;"></div>
             <p style="font-size:.72rem;color:#3d1a00;line-height:1.75;font-family:var(--font-display);margin-top:8px;">Every detective knows the nightmare scenario: you step out for an hour, come back, and the precinct has been cleared out. Evidence scattered. Notes gone. Three days of work vanished like smoke. That's why Sprout kept a locked case file — every confession, every data point logged in a book that survived the night.</p>
-            <p style="font-size:.72rem;color:#5c2800;line-height:1.75;font-family:var(--font-display);margin-top:6px;">A web page, by default, has no memory. Reload it, and everything you've done is gone. The Evidence and Suspects tabs update as you investigate. The Memory tab explains how your progress is saved in <strong>localStorage</strong> — so closing this tab won't erase what you've found.</p>
+            <p style="font-size:.72rem;color:#5c2800;line-height:1.75;font-family:var(--font-display);margin-top:6px;"><strong>The Memory — localStorage.</strong> A web page, by default, has no memory. Reload it, and everything you've done is gone — like a precinct that clears its files every night. <code style="background:rgba(0,0,0,.08);padding:1px 3px;">localStorage</code> is the locked filing cabinet that survives the night shift. It stores key-value pairs on the user's device indefinitely, no server required. Variables remember for one session. localStorage remembers forever. The Evidence and Suspects tabs above update live as you investigate. The Storage tab shows the code that keeps your progress safe.</p>
           </div>
 
           <div class="folder-page" id="fpage-evidence">
@@ -1027,15 +1104,28 @@ getComputedStyle(root)
     <!-- ═══ CH 6: CASE CLOSED ═══ -->
     <article class="chapter chapter--6" id="chapter-6" aria-labelledby="ch6-title">
       <div id="case-closed-panel">
-        <p class="chapter-label">Chapter 06 — Case Closed</p>
+        <p class="chapter-label">Chapter 06 — The Scroll · Case Closed</p>
         <h2 class="chapter-title" id="ch6-title">Case Closed</h2>
-        <p class="chapter-subtitle">The City Never Sleeps</p>
+        <p class="chapter-subtitle">ScrollTrigger · The City Never Sleeps</p>
+        <div class="code-block" style="font-size:.68rem;margin-bottom:16px;max-width:420px;">// The Scroll — scroll-driven interaction:
+// ScrollTrigger fires animations
+// when elements enter the viewport.
+ScrollTrigger.create({
+  trigger: '#chapter-6',
+  start: 'top 80%',
+  onEnter: () => {
+    console.log('Chapter revealed.');
+  }
+});
+// As you scrolled this site, every
+// chapter revealed itself this way.</div>
         <div class="case-typed-wrap">
-          <p class="case-typed" data-typed-text="Sprout lit a cigarette and looked at the board one last time. Variables held the facts. Event listeners caught every reaction. Data attributes exposed what was hidden. CSS variables changed the light when truth needed to be seen. And the case file never forgot."></p>
-          <p class="case-typed" data-typed-text="Without JavaScript, a webpage is a photograph: static, silent, and frozen. JavaScript makes it listen, react, remember, and transform."></p>
+          <p class="case-typed" data-typed-text="Sprout lit a cigarette and looked at the board one last time. Variables held the facts. Event listeners caught every reaction. Conditionals decided what happened next. Data attributes exposed what was hidden. CSS variables changed the light when truth needed to be seen. localStorage kept the case file safe through the long night. And the scroll carried the whole story forward, one frame at a time."></p>
+          <p class="case-typed" data-typed-text="Without JavaScript, a webpage is a photograph: static, silent, and frozen. With it, the page listens for your touch, reacts to your presence, remembers what you've done, and transforms itself around you."></p>
           <p class="case-typed case-red-neon" data-typed-text="The killer was never the point. The system was."></p>
           <span class="case-typing-cursor" aria-hidden="true"></span>
         </div>
+        <button type="button" id="restart-btn" aria-label="Restart the story from the beginning">↺ RESTART CASE</button>
       </div>
     </article>
 
@@ -1044,6 +1134,9 @@ getComputedStyle(root)
   </div><!-- /scroll-wrapper -->
 
   </main>
+
+  </div><!-- /smooth-content -->
+  </div><!-- /smooth-wrapper -->
 
   <script src="script.js"></script>
 

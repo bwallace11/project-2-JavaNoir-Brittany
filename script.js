@@ -12,6 +12,7 @@ let cluesFound = 0;
 let suspectsInterrogated = 0;
 let introComplete = false;
 let introTimeline = null;
+let smoother = null;
 const mobileStoryMedia = window.matchMedia('(max-width: 900px)');
 let currentMurdererKey = null;
 const foundClueKeys = new Set();
@@ -72,7 +73,7 @@ function isMotionReduced() {
 }
 
 function getClueKey(clueEl, fallbackIndex) {
-  return clueEl?.dataset?.clue || String(fallbackIndex);
+  return (clueEl && clueEl.dataset && clueEl.dataset.clue) || String(fallbackIndex);
 }
 
 function syncCaseProgressUI() {
@@ -333,6 +334,19 @@ function setMotionActive(active) {
     }
   }
   document.documentElement.classList.toggle('motion-reduced', effectiveMotionReduction);
+
+  // Kill or restore ScrollSmoother based on motion preference
+  if (effectiveMotionReduction && smoother) {
+    smoother.kill();
+    smoother = null;
+  } else if (!effectiveMotionReduction && !smoother && typeof ScrollSmoother !== 'undefined') {
+    smoother = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 1.35,
+      effects: true
+    });
+  }
 }
 
 function applyTheme(choice) {
@@ -655,6 +669,18 @@ function initMobileStoryMode() {
    ───────────────────────────────────────────── */
 function initHorizontalScroll() {
   gsap.registerPlugin(ScrollTrigger);
+  if (typeof ScrollSmoother !== 'undefined') gsap.registerPlugin(ScrollSmoother);
+
+  // ScrollSmoother — global smooth scrolling (bypassed for reduced motion)
+  if (!smoother && typeof ScrollSmoother !== 'undefined' && !isMotionReduced()) {
+    smoother = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 1.35,
+      effects: true
+    });
+  }
+
   const track    = document.querySelector('#scroll-track');
   const chapters = document.querySelectorAll('.chapter');
   if (!track) return;
@@ -685,7 +711,13 @@ function initHorizontalScroll() {
           dom.progressBar.style.width = progressValue + '%';
           dom.progressBar.setAttribute('aria-valuenow', String(progressValue));
         }
-        updateNavDots(Math.round(self.progress * (chapters.length - 1)));
+        const activeIdx = Math.round(self.progress * (chapters.length - 1));
+        updateNavDots(activeIdx);
+        // Hide scroll hint on last chapter
+        const hint = dom.scrollHint;
+        if (hint) {
+          hint.classList.toggle('hidden', activeIdx >= chapters.length - 1);
+        }
         // Ch1 text slam animation
         updateCh1Text(self.progress);
       }
@@ -699,6 +731,7 @@ function initHorizontalScroll() {
   initChapter5_CaseFile();
   initChapter6_CaseClosed(scrollTween);
   initTextFlyInEffects(scrollTween);
+  initScrollMotion(scrollTween);
 }
 
 function updateNavDots(activeIdx) {
@@ -778,76 +811,16 @@ function initCh1StickyText() {
   const panel = document.querySelector('#ch1-text-panel');
   if (!panel) return;
 
-  if (mobileStoryMedia.matches) {
-    panel.style.cssText = '';
-    return;
-  }
-
-  // Force fixed positioning via JS style (overrides .text-panel absolute)
-  panel.style.cssText = 'position:fixed!important;left:28px;top:56px;z-index:1000;max-width:520px;padding:28px 26px;max-height:calc(100vh - 84px);overflow-y:auto;';
-
-  const items = Array.from(panel.querySelectorAll('.chapter-label,.chapter-title,.chapter-subtitle,.chapter-body,.code-block,.metaphor-line'));
-
-  if (isMotionReduced()) {
-    items.forEach(el => { el.style.opacity='1'; el.style.transform=''; });
-    window._ch1Panel = panel;
-    window._ch1Slammed = false;
-    return;
-  }
-
-  // SLAM IN: each line flies in from the left wall, staggered
-  gsap.set(items, { opacity: 0, x: -180, skewX: -10, rotation: -2 });
-  gsap.to(items, {
-    opacity: 1, x: 0, skewX: 0, rotation: 0,
-    duration: 0.65,
-    stagger: 0.1,
-    ease: 'power4.out',
-    delay: 0.5
-  });
+  // Panel stays position:absolute inside its chapter — no fixed positioning needed.
+  // Just ensure it's visible and styled.
+  panel.style.cssText = '';
 
   window._ch1Panel = panel;
   window._ch1Slammed = false;
 }
 
-// Called every frame from the main ScrollTrigger onUpdate
-function updateCh1Text(p) {
-  const panel = window._ch1Panel;
-  if (!panel) return;
-
-  // Ch1 = progress 0 → ~0.205 (1/4.88 of scroll range with totalWidth math)
-  // Conservative: start exit at progress 0.11, fully gone by 0.22
-  const S = 0.11, E = 0.22;
-
-  if (p <= S) {
-    if (window._ch1Slammed) {
-      window._ch1Slammed = false;
-      // SLAM BACK IN from left wall
-      gsap.fromTo(panel,
-        { x: -1100, opacity: 0, rotation: -8, skewX: -14 },
-        { x: 0,     opacity: 1, rotation: 0,  skewX: 0,
-          duration: 0.6, ease: 'back.out(1.4)',
-          onStart: () => { panel.style.pointerEvents = 'auto'; }
-        }
-      );
-    }
-  } else if (p < E) {
-    // SLAM OUT: accelerates into wall (cubic ease-in feel via manual t^3)
-    const t = (p - S) / (E - S);
-    const e = t * t * t;
-    panel.style.pointerEvents = 'none';
-    gsap.set(panel, {
-      x:        -e * 1200,
-      opacity:  Math.max(0, 1 - t * 1.6),
-      rotation: -e * 12,
-      skewX:    -e * 18
-    });
-    if (t > 0.9) window._ch1Slammed = true;
-  } else {
-    gsap.set(panel, { x: -1200, opacity: 0, rotation: -12 });
-    window._ch1Slammed = true;
-    panel.style.pointerEvents = 'none';
-  }
-}
+// No-op — panel is now absolute inside Ch1, no progress-based show/hide needed
+function updateCh1Text(p) {}
 
 /* ─────────────────────────────────────────────
    CHAPTER TEXT FLY-INS
@@ -856,7 +829,7 @@ function updateCh1Text(p) {
 function initTextFlyInEffects(containerTween) {
   if (isMotionReduced() || !containerTween) return;
 
-  const panels = document.querySelectorAll('.text-panel:not(#ch1-text-panel)');
+  const panels = document.querySelectorAll('.text-panel');
 
   panels.forEach(panel => {
     const chapter = panel.closest('.chapter');
@@ -947,6 +920,225 @@ function initTextFlyInEffects(containerTween) {
         });
       }
     });
+  });
+}
+
+
+/* ─────────────────────────────────────────────
+   SCROLL-DRIVEN MOTION
+   Narrative GSAP animations tied to horizontal scroll progress.
+   ───────────────────────────────────────────── */
+function initScrollMotion(scrollTween) {
+  if (isMotionReduced() || !scrollTween) return;
+
+  // ── CRIME BOARD SHOWPIECE (Ch3) — scrubbed timeline, 3 internal steps ──
+  initCrimeBoardShowpiece(scrollTween);
+
+  // ── CH1: Console panel slides in from the right ──
+  const consolePanel = document.querySelector('#console-panel');
+  if (consolePanel) {
+    gsap.set(consolePanel, { x: 250, opacity: 0 });
+    ScrollTrigger.create({
+      trigger: '#chapter-1',
+      containerAnimation: scrollTween,
+      start: 'left 85%',
+      once: true,
+      onEnter: () => {
+        gsap.to(consolePanel, { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out' });
+      }
+    });
+  }
+
+  // ── CH2: Suspect cards rise from shadow ──
+  const suspectCards = document.querySelectorAll('.suspect-card');
+  if (suspectCards.length) {
+    gsap.set(suspectCards, { y: 80, opacity: 0, scale: 0.85 });
+    ScrollTrigger.create({
+      trigger: '#chapter-2',
+      containerAnimation: scrollTween,
+      start: 'left 65%',
+      once: true,
+      onEnter: () => {
+        gsap.to(suspectCards, { y: 0, opacity: 1, scale: 1, duration: 0.7, stagger: 0.15, ease: 'back.out(1.7)' });
+      }
+    });
+  }
+
+  // ── CH4: Darkroom photos drift onto clothesline ──
+  const drPhotos = document.querySelectorAll('.darkroom-photo');
+  if (drPhotos.length) {
+    gsap.set(drPhotos, { y: 40, scale: 0.92 });
+    ScrollTrigger.create({
+      trigger: '#chapter-4',
+      containerAnimation: scrollTween,
+      start: 'left 70%',
+      once: true,
+      onEnter: () => {
+        gsap.to(drPhotos, { y: 0, scale: 1, duration: 0.8, stagger: 0.08, ease: 'power2.out' });
+      }
+    });
+  }
+
+  // ── CH5: Folder system rises into view ──
+  const folderSystem = document.querySelector('#folder-system');
+  const ch5Label = document.querySelector('#ch5-label');
+  if (folderSystem) {
+    gsap.set(folderSystem, { y: 60, opacity: 0 });
+    if (ch5Label) gsap.set(ch5Label, { x: -80, opacity: 0 });
+    ScrollTrigger.create({
+      trigger: '#chapter-5',
+      containerAnimation: scrollTween,
+      start: 'left 65%',
+      once: true,
+      onEnter: () => {
+        gsap.to(folderSystem, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' });
+        if (ch5Label) {
+          gsap.to(ch5Label, { x: 0, opacity: 1, duration: 0.7, delay: 0.2, ease: 'back.out(1.5)' });
+        }
+      }
+    });
+  }
+}
+
+
+/* ─────────────────────────────────────────────
+   CRIME BOARD SHOWPIECE — Ch3 pinned scroll-driven animation
+   3 internal narrative steps driven by a single GSAP timeline:
+     Step 1 — Evidence Appears:  cards drop onto the corkboard
+     Step 2 — Connections Form:  red strings animate between items,
+              text panel drops into centre
+     Step 3 — Suspect Revealed:  photos enlarge, one suspect gets
+              a glowing highlight ring
+   The timeline is scrubbed by a ScrollTrigger spanning the
+   full width of Ch3 inside the horizontal-scroll container,
+   giving it a "hold-in-place" feel while steps play out.
+   ───────────────────────────────────────────── */
+function initCrimeBoardShowpiece(scrollTween) {
+  const chapter    = document.querySelector('#chapter-3');
+  const eCards     = document.querySelectorAll('.evidence-card');
+  const sPhotos    = document.querySelectorAll('.suspect-photo--board');
+  const clickHint  = document.querySelector('#ch3-click-hint');
+  const textPanel  = document.querySelector('#ch3-text-panel');
+  const stringSvg  = document.querySelector('#showpiece-strings');
+  const highlight  = document.querySelector('#suspect-highlight');
+  const step1Label = document.querySelector('#sp-step-1');
+  const step2Label = document.querySelector('#sp-step-2');
+  const step3Label = document.querySelector('#sp-step-3');
+  if (!chapter || !eCards.length) return;
+
+  // ── Initial hidden states ──
+  gsap.set(eCards, { y: -150, opacity: 0, scale: 0.65 });
+  // Suspect photos stay visible so users can interact with them
+  gsap.set(sPhotos, { opacity: 0.8 });
+  if (clickHint)  gsap.set(clickHint, { opacity: 0, y: -10 });
+  if (textPanel)  gsap.set(textPanel, { opacity: 0, y: -300, x: -180, scale: 0.5, rotation: -25 });
+  // Pin element — start hidden so it can pop in after panel lands
+  const panelPin = textPanel ? textPanel.querySelector('.pin') : null;
+  if (panelPin) gsap.set(panelPin, { scale: 0, opacity: 0 });
+  if (stringSvg)  gsap.set(stringSvg, { opacity: 0 });
+  if (highlight)  gsap.set(highlight, { opacity: 0, scale: 0.5 });
+
+  // Pre-draw red connection strings so they can fade in during Step 2
+  if (stringSvg) {
+    const lines = [
+      ['15%','18%','35%','15%'],  // TIME OF DEATH → WEAPON
+      ['35%','15%','60%','17%'],  // WEAPON → LOCATION
+      ['60%','17%','80%','20%'],  // LOCATION → MOTIVE
+      ['82%','35%','84%','56%'],  // DR. VUE → EXIT KEY LOG
+      ['5%','55%','12%','78%'],   // WIDOW → BUTLER
+      ['12%','78%','78%','78%'],  // BUTLER → NEPHEW
+    ];
+    lines.forEach(([x1,y1,x2,y2]) => {
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('stroke', '#cc1500');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('opacity', '0.7');
+      line.setAttribute('stroke-dasharray', '600');
+      line.setAttribute('stroke-dashoffset', '600');
+      stringSvg.appendChild(line);
+    });
+  }
+
+  // ── 3-step scrubbed timeline (second project timeline) ──
+  const boardTL = gsap.timeline();
+
+  // ── STEP 1: Evidence Appears ──
+  if (step1Label) boardTL.to(step1Label, { opacity: 1, duration: 0.08 });
+  boardTL.to(eCards, {
+    y: 0, opacity: 1, scale: 1,
+    duration: 0.35, stagger: 0.05,
+    ease: 'back.out(1.4)'
+  });
+  // Brief hold at step 1
+  boardTL.to({}, { duration: 0.08 });
+  if (step1Label) boardTL.to(step1Label, { opacity: 0.35, duration: 0.05 });
+
+  // ── STEP 2: Connections Form ──
+  if (step2Label) boardTL.to(step2Label, { opacity: 1, duration: 0.08 });
+  // Strings draw on
+  if (stringSvg) {
+    boardTL.to(stringSvg, { opacity: 1, duration: 0.05 });
+    boardTL.to('#showpiece-strings line', {
+      strokeDashoffset: 0,
+      duration: 0.2, stagger: 0.04,
+      ease: 'power2.inOut'
+    });
+  }
+  // Text panel flies in from the upper-left and gets pinned to the board
+  if (textPanel) {
+    boardTL.to(textPanel, {
+      opacity: 1, y: 0, x: 0, scale: 1, rotation: 1,
+      duration: 0.22, ease: 'power4.out'
+    }, '<+=0.06');
+    // Settle: rotate to final resting angle
+    boardTL.to(textPanel, {
+      rotation: -1, duration: 0.06, ease: 'power1.inOut'
+    });
+    // Pin pops in — the "pinning" moment
+    if (panelPin) {
+      boardTL.to(panelPin, {
+        scale: 1.4, opacity: 1, duration: 0.04, ease: 'back.out(3)'
+      });
+      boardTL.to(panelPin, {
+        scale: 1, duration: 0.05, ease: 'elastic.out(1,0.4)'
+      });
+    }
+  }
+  boardTL.to({}, { duration: 0.08 });
+  if (step2Label) boardTL.to(step2Label, { opacity: 0.35, duration: 0.05 });
+
+  // ── STEP 3: Suspect Revealed ──
+  if (step3Label) boardTL.to(step3Label, { opacity: 1, duration: 0.08 });
+  boardTL.to(sPhotos, {
+    opacity: 1,
+    duration: 0.2, stagger: 0.04,
+    ease: 'power2.out'
+  });
+  // Highlight ring pulses onto one suspect
+  if (highlight) {
+    boardTL.to(highlight, {
+      opacity: 1, scale: 1,
+      duration: 0.15, ease: 'elastic.out(1,0.4)'
+    });
+  }
+  // Click hint appears as the final cue to interact
+  if (clickHint) {
+    boardTL.to(clickHint, {
+      opacity: 1, y: 0,
+      duration: 0.1, ease: 'power2.out'
+    });
+  }
+
+  // ── ScrollTrigger: scrub the timeline across the full Ch3 scroll range ──
+  ScrollTrigger.create({
+    trigger: chapter,
+    containerAnimation: scrollTween,
+    start: 'left 90%',
+    end: 'right 10%',
+    scrub: 0.8,
+    animation: boardTL
   });
 }
 
@@ -1320,13 +1512,13 @@ function initChapter6_CaseClosed(containerTween) {
   const typeLine = (line, onDone) => {
     const text = line.dataset.rawText || '';
     let i = 0;
-    const speed = line.classList.contains('case-red-neon') ? 15 : 8;
+    const speed = line.classList.contains('case-red-neon') ? 10 : 4;
     const timer = setInterval(() => {
       i += 1;
       line.textContent = text.slice(0, i);
       if (i >= text.length) {
         clearInterval(timer);
-        setTimeout(onDone, 170);
+        setTimeout(onDone, 100);
       }
     }, speed);
   };
@@ -1358,6 +1550,14 @@ function initChapter6_CaseClosed(containerTween) {
     once: true,
     onEnter: runTypeSequence
   });
+
+  // Restart button — scroll back to the top
+  const restartBtn = chapter.querySelector('#restart-btn');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 }
 
 /* Develop photos and evidence: stagger them in, then start drip animations */
@@ -1539,7 +1739,7 @@ function startDarkroomParallax() {
 // ── RANDOM MURDER SELECTION: ensures no repeats in a row ──
 const MURDERERS = ['doctor', 'widow', 'butler', 'nephew'];
 let murdererPool = [];
-let lastMurderer = null;
+let lastMurderer = storage.getItem('lastMurderer') || null;
 
 function getCurrentMurdererKey() {
   if (!currentMurdererKey) {
@@ -1551,13 +1751,14 @@ function getCurrentMurdererKey() {
 function pickMurderer() {
   if (murdererPool.length === 0) {
     murdererPool = [...MURDERERS].filter(m => m !== lastMurderer);
-    // Shuffle
+    // Shuffle (Fisher-Yates)
     for (let i = murdererPool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [murdererPool[i], murdererPool[j]] = [murdererPool[j], murdererPool[i]];
     }
   }
   lastMurderer = murdererPool.pop();
+  storage.setItem('lastMurderer', lastMurderer);
   return lastMurderer;
 }
 
@@ -1608,7 +1809,10 @@ function initChapter5_CaseFile() {
       document.querySelectorAll('.folder-page').forEach(p => p.classList.remove('active'));
       this.classList.add('active');
       const page = document.querySelector('#fpage-' + this.dataset.tab);
-      if (page) page.classList.add('active');
+      if (page) {
+        void page.offsetWidth; // force reflow to re-trigger CSS animation
+        page.classList.add('active');
+      }
     });
   });
 
