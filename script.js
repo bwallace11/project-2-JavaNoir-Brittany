@@ -661,6 +661,7 @@ function initHorizontalScroll() {
 
   const totalWidth = track.scrollWidth - window.innerWidth;
   if (totalWidth <= 0) { requestAnimationFrame(initHorizontalScroll); return; }
+  const chapterSnapStep = chapters.length > 1 ? 1 / (chapters.length - 1) : 1;
 
   const scrollTween = gsap.to(track, {
     x: -totalWidth, ease: 'none',
@@ -668,14 +669,22 @@ function initHorizontalScroll() {
       trigger: '#scroll-wrapper',
       start: 'top top',
       end: () => '+=' + (totalWidth + window.innerWidth),
-      scrub: 1, pin: true, anticipatePin: 1,
+      scrub: 0.45, pin: true, anticipatePin: 1,
+      // Let users scroll naturally, then lock to the nearest chapter.
+      snap: isMotionReduced() ? false : {
+        snapTo: chapterSnapStep,
+        inertia: false,
+        directional: true,
+        duration: { min: 0.08, max: 0.2 },
+        ease: 'power3.out',
+        delay: 0.01
+      },
       onUpdate: (self) => {
         if (dom.progressBar) {
           const progressValue = Math.round(self.progress * 100);
           dom.progressBar.style.width = progressValue + '%';
           dom.progressBar.setAttribute('aria-valuenow', String(progressValue));
         }
-        if (self.progress > 0.02 && dom.scrollHint) gsap.to(dom.scrollHint, { opacity: 0, duration: 0.4 });
         updateNavDots(Math.round(self.progress * (chapters.length - 1)));
         // Ch1 text slam animation
         updateCh1Text(self.progress);
