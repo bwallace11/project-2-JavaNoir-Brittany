@@ -34,6 +34,8 @@ Overall, the JavaNoir project is designed to show how storytelling, animation, a
 
 
 - **Tech stack:** 
+
+
 Frontend
 
 HTML5
