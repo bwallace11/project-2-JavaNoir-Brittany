@@ -180,33 +180,70 @@
       <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to top,#03020a,transparent);z-index:4;pointer-events:none;" aria-hidden="true"></div>
 
        <img src="assets/images/detective.png" alt="Detective with flashlight"
-         style="position:absolute;bottom:0;left:26%;height:280px;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;z-index:25;filter:drop-shadow(4px 0 15px rgba(61,127,255,.4));transform:scaleX(-1);" />
+         class="detective-img"
+         style="position:absolute;bottom:0;left:26%;height:280px;image-rendering:-webkit-crisp-edges;image-rendering:pixelated;z-index:25;transform:scaleX(-1);" />
+
+      <div id="clue-desk" aria-hidden="true"></div>
 
       <!-- 5 clues — external SVG evidence icons from assets/svg -->
-      <button type="button" class="clue-item" style="bottom:34%;left:57%;"
-              data-clue="Footprints" data-detail="Size 11 boot, deep heel. Walked fast." aria-label="Footprints">
+      <button type="button" class="clue-item" style="bottom:34%;left:49%;--clue-rot:-4deg;"
+              data-clue="Boot Print"
+              data-caption="A heavy boot crossed the alley in a hurry."
+              data-detail="Size 11 boot, deep heel. Tracks angle toward the fire escape."
+              data-hidden="The toe drag suggests the suspect pivoted before running."
+              aria-label="Boot print">
         <img class="clue-svg" src="assets/svg/footprints.svg" alt="" aria-hidden="true" />
+        <span class="clue-caption">Boot print cuts toward the escape.</span>
       </button>
 
-      <button type="button" class="clue-item" style="bottom:48%;left:74%;"
-              data-clue="Shell Casing" data-detail=".38 caliber revolver, no serial." aria-label="Shell casing">
+      <button type="button" class="clue-item" style="bottom:49%;left:70%;--clue-rot:3deg;"
+              data-clue="Shell Casing"
+              data-caption="The brass is still warm near the victim."
+              data-detail=".38 caliber revolver, no serial. Powder burn pattern is tight."
+              data-hidden="The shell mark suggests the shooter stood close before firing."
+              aria-label="Shell casing">
         <img class="clue-svg" src="assets/svg/shellCasing.svg" alt="" aria-hidden="true" />
+        <span class="clue-caption">Shell casing. Shot taken at close range.</span>
       </button>
 
-      <button type="button" class="clue-item" style="bottom:30%;left:83%;"
-              data-clue="Matchbook" data-detail="Club Noir — Room 7 scrawled inside." aria-label="Matchbook">
+      <button type="button" class="clue-item" style="bottom:29%;left:79%;--clue-rot:-2deg;"
+              data-clue="Matchbook"
+              data-caption="A cheap matchbook tucked under a crate."
+              data-detail="Club Noir — Room 7 scrawled inside."
+              data-hidden="Hidden under soot: 'Velvet Room, Club Noir'."
+              data-requires-inspect="true"
+              aria-label="Matchbook">
         <img class="clue-svg" src="assets/svg/noirMatchbook.svg" alt="" aria-hidden="true" />
+        <span class="clue-caption">Matchbook smells like stale whiskey.</span>
       </button>
 
-      <button type="button" class="clue-item" style="bottom:54%;left:46%;"
-              data-clue="Cigarette" data-detail="Expensive brand. Monogram: E" aria-label="Cigarette butt">
+      <button type="button" class="clue-item" style="bottom:55%;left:44%;--clue-rot:2deg;"
+              data-clue="Cigarette"
+              data-caption="Someone stood in the rain long enough to finish one."
+              data-detail="Expensive brand. Monogram: E. Filter is waterlogged at the tip."
+              data-hidden="Ash length says it burned while someone waited nearby."
+              aria-label="Cigarette butt">
         <img class="clue-svg" src="assets/svg/cigerette.svg" alt="" aria-hidden="true" />
+        <span class="clue-caption">Cigarette burn says someone waited.</span>
       </button>
 
-      <button type="button" class="clue-item" style="bottom:39%;left:65%;"
-              data-clue="Torn Fabric" data-detail="Dark wool blend, gold button thread." aria-label="Torn fabric">
+      <button type="button" class="clue-item" style="bottom:39%;left:61%;--clue-rot:5deg;"
+              data-clue="Torn Cloth"
+              data-caption="A wool scrap snagged on rusted wire."
+              data-detail="Dark wool blend, gold button thread."
+              data-hidden="Thread weave matches tailored overcoats sold on Pine Street."
+              aria-label="Torn cloth">
         <img class="clue-svg" src="assets/svg/tornCloth.svg" alt="" aria-hidden="true" />
+        <span class="clue-caption">Torn cloth could match a suspect coat.</span>
       </button>
+
+      <aside id="clue-casefile" aria-live="polite">
+        <p class="clue-casefile-title">FIELD NOTES</p>
+        <p id="clue-casefile-name">Hover a clue to inspect.</p>
+        <p id="clue-casefile-caption">Every trace has a story when you look twice.</p>
+        <p id="clue-casefile-detail">Click a clue to log its hidden detail.</p>
+        <p id="investigation-moment" class="locked">Investigation moment: inspect the matchbook once, then click it again to log the bar lead.</p>
+      </aside>
 
       <div id="clue-counter" aria-live="polite">
         <span class="clues-count">0</span>
@@ -355,7 +392,7 @@ card.addEventListener('click', () => {
     <article class="chapter chapter--3" id="chapter-3" aria-labelledby="ch3-title">
 
       <!-- Showpiece step indicators — appear during scroll-driven sequence -->
-      <div id="showpiece-steps" aria-hidden="true" style="position:absolute;top:12px;right:14px;z-index:12;font-family:var(--font-ui);font-size:.52rem;letter-spacing:.25em;text-transform:uppercase;pointer-events:none;">
+      <div id="showpiece-steps" aria-hidden="true" style="position:absolute;top:calc(12px + 3vh);left:calc(14px + 3vw);z-index:12;font-family:var(--font-ui);font-size:.52rem;letter-spacing:.25em;text-transform:uppercase;pointer-events:none;">
         <div class="showpiece-step" id="sp-step-1" style="color:var(--color-smoke);opacity:0;margin-bottom:4px;">STEP 1 — EVIDENCE APPEARS</div>
         <div class="showpiece-step" id="sp-step-2" style="color:var(--color-blue-neon);opacity:0;margin-bottom:4px;">STEP 2 — CONNECTIONS FORM</div>
         <div class="showpiece-step" id="sp-step-3" style="color:var(--color-red-neon);opacity:0;">STEP 3 — SUSPECT REVEALED</div>
@@ -369,24 +406,27 @@ card.addEventListener('click', () => {
 
       <div id="corkboard" role="region" aria-label="Evidence corkboard">
 
+        <!-- Center anchor point where all strings converge -->
+        <div id="board-center-anchor" aria-hidden="true" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:var(--color-blue-neon);border-radius:50%;box-shadow:0 0 8px var(--color-blue-neon);z-index:8;pointer-events:none;opacity:0;"></div>
+
         <!-- Web drawn on click — z-index BELOW card text so strings go behind labels -->
         <svg id="evidence-strings" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;" aria-hidden="true"></svg>
 
         <!-- Evidence cards — z-index:6 so text sits above strings -->
         <div class="evidence-card" role="button" tabindex="0" id="ecard-0"
-             style="left:15%;top:8%;--card-rotation:-3deg;z-index:6;"
+             style="left:15%;top:13%;--card-rotation:-3deg;z-index:6;"
              data-label="TIME OF DEATH" data-info="2:17 AM — coroner confirmed">
           <div class="pin" aria-hidden="true"></div>
           <span class="card-label">TIME OF DEATH</span>2:17 AM
         </div>
         <div class="evidence-card" role="button" tabindex="0" id="ecard-1"
-             style="left:35%;top:5%;--card-rotation:2deg;z-index:6;"
+             style="left:26%;top:24%;--card-rotation:2deg;z-index:6;"
              data-label="WEAPON" data-info=".38 revolver — unregistered, no serial">
           <div class="pin" aria-hidden="true"></div>
           <span class="card-label">WEAPON</span>.38 Revolver
         </div>
         <div class="evidence-card" role="button" tabindex="0" id="ecard-2"
-             style="left:60%;top:7%;--card-rotation:-1.5deg;z-index:6;"
+             style="left:68%;top:20%;--card-rotation:-1.5deg;z-index:6;"
              data-label="LOCATION" data-info="East alley, Club Noir exit door #3">
           <div class="pin" aria-hidden="true"></div>
           <span class="card-label">LOCATION</span>East Alley
@@ -404,7 +444,7 @@ card.addEventListener('click', () => {
           <span class="card-label">EXIT KEY LOG</span>2:08 AM
         </div>
         <div class="evidence-card" role="button" tabindex="0" id="ecard-5"
-             style="left:5%;top:8%;--card-rotation:2.5deg;z-index:6;"
+             style="left:25%;top:8%;--card-rotation:2.5deg;z-index:6;"
              data-label="FORENSICS" data-info="Cigarette monogram: D.M. — the nephew">
           <div class="pin" aria-hidden="true"></div>
           <span class="card-label">FORENSICS</span>Monogram
@@ -422,7 +462,7 @@ card.addEventListener('click', () => {
         <div class="suspect-photo suspect-photo--board" role="button" tabindex="0"
              id="bphoto-widow"
              data-label="THE WIDOW" data-info="Sole $4.2M heir. Alibi: unverified."
-             style="left:5%;top:45%;transform:rotate(2deg);z-index:6;">
+             style="left:25%;top:45%;transform:rotate(2deg);z-index:6;">
           <div class="pin" aria-hidden="true"></div>
           <img src="assets/images/suspectWidow.png" alt="The Widow" />
           <p class="photo-label">THE WIDOW</p>
@@ -449,7 +489,7 @@ card.addEventListener('click', () => {
         </div>
 
         <!-- Text panel INSIDE corkboard so strings can connect to it -->
-        <div class="text-panel" id="ch3-text-panel" style="position:absolute;bottom:4%;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:7;background:rgba(3,2,10,.92);border:1px solid rgba(61,127,255,.15);padding:18px 22px;max-width:440px;pointer-events:none;">
+        <div class="text-panel" id="ch3-text-panel" style="position:absolute;bottom:14%;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:7;background:rgba(3,2,10,.92);border:1px solid rgba(61,127,255,.15);padding:18px 22px;max-width:440px;pointer-events:none;">
           <div class="pin" style="background:var(--color-blue-neon);box-shadow:0 0 8px var(--color-blue-neon);"></div>
           <p class="chapter-label">Chapter 03 — The Crime Web</p>
           <h2 class="chapter-title" id="ch3-title" style="font-size:1.4rem;">The Crime<br>Board</h2>

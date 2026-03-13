@@ -388,9 +388,20 @@ function setupMouseListeners() {
       if (ch1) {
         const r = ch1.getBoundingClientRect();
         const cx = e.clientX - r.left, cy = e.clientY - r.top;
+        const detective = ch1.querySelector('.detective-img');
+        let hx = r.width * 0.40;
+        let hy = r.height * 0.73;
+
+        if (detective) {
+          const dr = detective.getBoundingClientRect();
+          // Approximate flashlight position in detective's hand.
+          hx = dr.left - r.left + dr.width * 0.47;
+          hy = dr.top - r.top + dr.height * 0.57;
+        }
+
         dom.flashlightEl.style.background = isLight
-          ? `radial-gradient(circle 200px at ${cx}px ${cy}px, rgba(80,0,160,0.15) 0%, rgba(40,0,100,0.7) 40%, rgba(20,0,60,0.94) 65%, rgba(10,0,40,0.98) 100%)`
-          : `radial-gradient(circle 200px at ${cx}px ${cy}px, transparent 0%, rgba(0,0,0,.97) 100%)`;
+          ? `radial-gradient(circle 180px at ${hx}px ${hy}px, rgba(240,210,255,.58) 0%, rgba(185,115,245,.28) 42%, rgba(110,48,170,0) 84%), radial-gradient(circle 200px at ${cx}px ${cy}px, rgba(80,0,160,0.15) 0%, rgba(40,0,100,0.7) 40%, rgba(20,0,60,0.94) 65%, rgba(10,0,40,0.98) 100%)`
+          : `radial-gradient(circle 175px at ${hx}px ${hy}px, rgba(210,238,255,.52) 0%, rgba(125,185,255,.24) 40%, rgba(45,88,140,0) 82%), radial-gradient(circle 200px at ${cx}px ${cy}px, transparent 0%, rgba(0,0,0,.97) 100%)`;
         dom.flashlightEl.style.mixBlendMode = isLight ? 'multiply' : 'normal';
       }
     }
@@ -744,6 +755,10 @@ function updateNavDots(activeIdx) {
 function initChapter1_Flashlight() {
   console.log('%c📁 CASE FILE OPENED: ' + caseName, 'color: #ffaa00; font-weight:bold;');
   const consoleLines = document.querySelector('#console-lines');
+  const casefileName = document.querySelector('#clue-casefile-name');
+  const casefileCaption = document.querySelector('#clue-casefile-caption');
+  const casefileDetail = document.querySelector('#clue-casefile-detail');
+  const investigationMoment = document.querySelector('#investigation-moment');
 
   syncCaseProgressUI();
 
@@ -756,15 +771,134 @@ function initChapter1_Flashlight() {
     consoleLines.scrollTop = consoleLines.scrollHeight;
   }
 
+  function updateCasefile(name, caption, detail) {
+    if (casefileName) casefileName.textContent = name || 'Unlabeled evidence';
+    if (casefileCaption) casefileCaption.textContent = caption || 'No field caption recorded.';
+    if (casefileDetail) casefileDetail.textContent = detail || 'No hidden detail recorded yet.';
+
+    if (!isMotionReduced()) {
+      gsap.fromTo('#clue-casefile',
+        { opacity: 0.7, y: 5 },
+        { opacity: 1, y: 0, duration: 0.24, ease: 'power2.out' }
+      );
+    }
+  }
+
+  function setInvestigationMoment(text, unlocked) {
+    if (!investigationMoment) return;
+    investigationMoment.textContent = text;
+    investigationMoment.classList.toggle('locked', !unlocked);
+    investigationMoment.classList.toggle('unlocked', unlocked);
+  }
+
+  function playClueInspectAnimation(clueEl, clueName) {
+    if (isMotionReduced() || !clueEl) return;
+    const icon = clueEl.querySelector('.clue-svg');
+    if (!icon) return;
+
+    const clue = String(clueName || '').toLowerCase();
+
+    if (clue.includes('shell')) {
+      gsap.fromTo(icon,
+        { rotation: -10, scale: 1 },
+        { rotation: 10, scale: 1.12, duration: 0.14, yoyo: true, repeat: 1, ease: 'power1.inOut' }
+      );
+      return;
+    }
+
+    if (clue.includes('cloth')) {
+      gsap.fromTo(icon,
+        { skewX: 0, x: 0 },
+        { skewX: 8, x: 3, duration: 0.18, yoyo: true, repeat: 1, ease: 'sine.inOut' }
+      );
+      return;
+    }
+
+    if (clue.includes('boot')) {
+      gsap.fromTo(icon,
+        { scale: 0.94, filter: 'brightness(1)' },
+        { scale: 1.16, filter: 'brightness(1.22)', duration: 0.22, yoyo: true, repeat: 1, ease: 'back.out(2)' }
+      );
+      return;
+    }
+
+    if (clue.includes('cigarette')) {
+      gsap.fromTo(icon,
+        { boxShadow: '0 0 0 rgba(255,170,0,0)' },
+        { boxShadow: '0 0 18px rgba(255,170,0,.55)', duration: 0.24, yoyo: true, repeat: 1, ease: 'power2.out' }
+      );
+      return;
+    }
+
+    if (clue.includes('matchbook')) {
+      gsap.fromTo(icon,
+        { rotationY: 0, scale: 1, transformPerspective: 480 },
+        { rotationY: 25, scale: 1.08, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.inOut' }
+      );
+      return;
+    }
+
+    gsap.fromTo(icon,
+      { scale: 1 },
+      { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' }
+    );
+  }
+
   document.querySelectorAll('.clue-item').forEach((clue, idx) => {
+    clue.addEventListener('mouseenter', function() {
+      if (foundClueKeys.has(getClueKey(this, idx))) return;
+      updateCasefile(
+        this.dataset.clue,
+        this.dataset.caption,
+        'Hover to inspect. Click to log hidden detail.'
+      );
+    });
+
+    clue.addEventListener('focus', function() {
+      if (foundClueKeys.has(getClueKey(this, idx))) return;
+      updateCasefile(
+        this.dataset.clue,
+        this.dataset.caption,
+        'Keyboard inspect ready. Press Enter/Space to collect.'
+      );
+    });
+
     clue.addEventListener('click', function() {
       const clueKey = getClueKey(this, idx);
       if (foundClueKeys.has(clueKey)) return;
+
+      const name = this.dataset.clue;
+      const caption = this.dataset.caption;
+      const detail = this.dataset.detail;
+      const hiddenDetail = this.dataset.hidden || detail;
+      const requiresInspect = this.dataset.requiresInspect === 'true';
+
+      if (requiresInspect && this.dataset.inspected !== 'true') {
+        this.dataset.inspected = 'true';
+        this.classList.add('inspected');
+        playClueInspectAnimation(this, name);
+        updateCasefile(name, caption, hiddenDetail);
+        setInvestigationMoment('✓ Hidden ink exposed. Click the matchbook again to log it as evidence.', true);
+        addConsoleLine('<span class="c-comment">// Investigation moment: matchbook inspected under a better angle</span>', 'cline-dim');
+        addConsoleLine(`<span class="c-key">console</span>.log(<span class="c-str">"🕵️ Hidden lead: ${hiddenDetail}"</span>);`, 'cline-find');
+
+        if (!isMotionReduced()) {
+          gsap.fromTo(this,
+            { boxShadow: '0 0 0 rgba(122,179,255,0)' },
+            { boxShadow: '0 0 18px rgba(122,179,255,.6)', duration: 0.28, yoyo: true, repeat: 1 }
+          );
+        }
+        return;
+      }
+
       foundClueKeys.add(clueKey);
       syncCaseProgressUI();
+      playClueInspectAnimation(this, name);
+      updateCasefile(name, caption, hiddenDetail);
 
-      const name   = this.dataset.clue;
-      const detail = this.dataset.detail;
+      if (requiresInspect) {
+        setInvestigationMoment('✓ Matchbook logged. Club Noir is now a confirmed lead.', true);
+      }
 
       const counter = document.querySelector('.clues-count');
       if (counter) {
@@ -777,6 +911,7 @@ function initChapter1_Flashlight() {
 
       addConsoleLine(`<span class="c-key">console</span>.log(<span class="c-str">"🔎 ${name}"</span>);`, 'cline-find');
       addConsoleLine(`<span class="c-comment">// → ${detail}</span>`, 'cline-dim');
+      addConsoleLine(`<span class="c-comment">// story: ${caption}</span>`, 'cline-dim');
       addConsoleLine(`cluesFound = <span class="c-num">${cluesFound}</span>;`, 'cline-log');
 
       console.log('%c🔎 Clue: ' + name, 'color: #ffaa00;');
@@ -920,6 +1055,27 @@ function initScrollMotion(scrollTween) {
     });
   }
 
+  // ── CH1: Clues fade into view as discovered beats ──
+  const chapter1Clues = document.querySelectorAll('.clue-item');
+  if (chapter1Clues.length) {
+    gsap.set(chapter1Clues, { autoAlpha: 0, filter: 'blur(5px)' });
+    ScrollTrigger.create({
+      trigger: '#chapter-1',
+      containerAnimation: scrollTween,
+      start: 'left 82%',
+      once: true,
+      onEnter: () => {
+        gsap.to(chapter1Clues, {
+          autoAlpha: 1,
+          filter: 'blur(0px)',
+          duration: 0.55,
+          stagger: 0.1,
+          ease: 'power2.out'
+        });
+      }
+    });
+  }
+
   // ── CH2: Suspect cards rise from shadow ──
   const suspectCards = document.querySelectorAll('.suspect-card');
   if (suspectCards.length) {
@@ -986,6 +1142,7 @@ function initScrollMotion(scrollTween) {
    ───────────────────────────────────────────── */
 function initCrimeBoardShowpiece(scrollTween) {
   const chapter    = document.querySelector('#chapter-3');
+  const board      = document.querySelector('#corkboard');
   const eCards     = document.querySelectorAll('.evidence-card');
   const sPhotos    = document.querySelectorAll('.suspect-photo--board');
   const clickHint  = document.querySelector('#ch3-click-hint');
@@ -995,7 +1152,7 @@ function initCrimeBoardShowpiece(scrollTween) {
   const step1Label = document.querySelector('#sp-step-1');
   const step2Label = document.querySelector('#sp-step-2');
   const step3Label = document.querySelector('#sp-step-3');
-  if (!chapter || !eCards.length) return;
+  if (!chapter || !board || !eCards.length) return;
 
   // ── Initial hidden states ──
   gsap.set(eCards, { y: -150, opacity: 0, scale: 0.65 });
@@ -1011,18 +1168,28 @@ function initCrimeBoardShowpiece(scrollTween) {
 
   // Pre-draw red connection strings so they can fade in during Step 2
   if (stringSvg) {
-    const lines = [
-      ['15%','18%','35%','15%'],  // TIME OF DEATH → WEAPON
-      ['35%','15%','60%','17%'],  // WEAPON → LOCATION
-      ['60%','17%','80%','20%'],  // LOCATION → MOTIVE
-      ['82%','35%','84%','56%'],  // DR. VUE → EXIT KEY LOG
-      ['5%','55%','12%','78%'],   // WIDOW → BUTLER
-      ['12%','78%','78%','78%'],  // BUTLER → NEPHEW
+    const boardRect = board.getBoundingClientRect();
+    stringSvg.setAttribute('viewBox', `0 0 ${boardRect.width} ${boardRect.height}`);
+
+    const connections = [
+      ['#ecard-0', '#ecard-1'],
+      ['#ecard-1', '#ecard-2'],
+      ['#ecard-2', '#ecard-3'],
+      ['#bphoto-doctor', '#ecard-4'],
+      ['#bphoto-widow', '#bphoto-butler'],
+      ['#bphoto-butler', '#bphoto-nephew'],
     ];
-    lines.forEach(([x1,y1,x2,y2]) => {
+
+    connections.forEach(([fromSelector, toSelector]) => {
+      const fromEl = board.querySelector(fromSelector);
+      const toEl = board.querySelector(toSelector);
+      if (!fromEl || !toEl) return;
+
+      const fromCenter = getElementCenter(fromEl, boardRect, 'center');
+      const toCenter = getElementCenter(toEl, boardRect, 'center');
       const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('x1', fromCenter.x); line.setAttribute('y1', fromCenter.y);
+      line.setAttribute('x2', toCenter.x); line.setAttribute('y2', toCenter.y);
       line.setAttribute('stroke', '#cc1500');
       line.setAttribute('stroke-width', '1.5');
       line.setAttribute('opacity', '0.7');
@@ -1278,11 +1445,18 @@ function initChapter3_EvidenceWeb() {
       const textPin = document.querySelector('#ch3-text-panel');
 
       if (!clickedBoardItems.includes(this)) {
-        if (board && svg && textPin) {
+        if (board && svg) {
           const boardRect = board.getBoundingClientRect();
+          const svgRect = svg.getBoundingClientRect();
+          // Set viewBox to match the actual SVG rendered dimensions
+          svg.setAttribute('viewBox', `0 0 ${svgRect.width} ${svgRect.height}`);
           const newCenter = getElementCenter(this, boardRect);
-          const panelCenter = getElementCenter(textPin, boardRect);
-          drawString(svg, newCenter.x, newCenter.y, panelCenter.x, panelCenter.y, 'rgba(61,127,255,0.5)');
+          // Calculate center in SVG's actual rendered space
+          const boardCenter = {
+            x: svgRect.width / 2,
+            y: svgRect.height / 2
+          };
+          drawString(svg, newCenter.x, newCenter.y, boardCenter.x, boardCenter.y, 'rgba(61,127,255,0.5)');
         }
         clickedBoardItems.push(this);
       }
@@ -1306,8 +1480,15 @@ function initChapter3_EvidenceWeb() {
   }, 600);
 }
 
-function getElementCenter(el, boardRect) {
+function getElementCenter(el, boardRect, anchor = 'pin') {
   const r = el.getBoundingClientRect();
+  if (anchor === 'center') {
+    return {
+      x: r.left + r.width / 2 - boardRect.left,
+      y: r.top + r.height / 2 - boardRect.top
+    };
+  }
+
   const isCard = el.classList.contains('evidence-card');
   const isPhoto = el.classList.contains('suspect-photo--board');
   return {
@@ -1316,6 +1497,13 @@ function getElementCenter(el, boardRect) {
       : isPhoto ? r.top + 20 - boardRect.top
       : r.top + r.height / 2 - boardRect.top
   };
+}
+
+function getPanelAnchorPoint(el, boardRect) {
+  const r = el.getBoundingClientRect();
+  const relX = r.left + r.width / 2 - boardRect.left;
+  const relY = r.top + 12 - boardRect.top;
+  return { x: relX, y: relY };
 }
 
 function drawString(svg, x1, y1, x2, y2, color) {

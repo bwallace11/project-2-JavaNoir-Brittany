@@ -498,6 +498,7 @@ html.motion-reduced #custom-cursor {
 .chapter--4 { background: #000; }
 .chapter--5 { background: #06040a; }
 .chapter--6 { background: radial-gradient(ellipse at 50% 12%, #130412 0%, #07030d 56%, #03020a 100%); }
+[data-theme="light"] .chapter--6 { background: linear-gradient(160deg, #f8f5f0 0%, #ede9e0 100%); }
 
 /* Keep Chapter 2 content clear of the persistent right-edge scroll hint. */
 .chapter--2 .text-panel--right {
@@ -590,35 +591,225 @@ html.motion-reduced #custom-cursor {
    ══════════════════════════════════════════ */
 #flashlight-overlay {
   position: absolute; inset: 0; z-index: 30; pointer-events: none;
-  background: radial-gradient(circle 200px at 50% 50%, transparent 0%, rgba(0,0,0,.97) 100%);
+  background:
+    radial-gradient(circle 175px at 40% 73%, rgba(210,238,255,.52) 0%, rgba(125,185,255,.24) 40%, rgba(45,88,140,0) 82%),
+    radial-gradient(circle 200px at 50% 50%, transparent 0%, rgba(0,0,0,.97) 100%);
 }
 
 /* UV flashlight for light mode — purple UV effect */
 [data-theme="light"] #flashlight-overlay {
-  background: radial-gradient(circle 250px at 50% 50%, transparent 0%, rgba(184,139,255,.55) 40%, rgba(184,139,255,.2) 100%);
+  background:
+    radial-gradient(circle 180px at 40% 73%, rgba(240,210,255,.58) 0%, rgba(185,115,245,.28) 42%, rgba(110,48,170,0) 84%),
+    radial-gradient(circle 250px at 50% 50%, transparent 0%, rgba(184,139,255,.55) 40%, rgba(184,139,255,.2) 100%);
+}
+
+/* Keep the detective dark so the hand-light reads as a front spotlight. */
+.detective-img {
+  filter: brightness(.9) contrast(1.1) saturate(.9) !important;
+}
+
+[data-theme="light"] .detective-img {
+  filter: brightness(.93) contrast(1.08) saturate(.92) !important;
+}
+
+#clue-desk {
+  position: absolute;
+  right: 9%;
+  bottom: 19%;
+  width: min(48vw, 520px);
+  height: min(42vh, 300px);
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 26;
+  background:
+    linear-gradient(0deg, rgba(18,10,6,.82), rgba(18,10,6,.82)),
+    repeating-linear-gradient(92deg, rgba(81,52,29,.35), rgba(81,52,29,.35) 7px, rgba(45,27,15,.25) 8px, rgba(45,27,15,.25) 15px);
+  border: 1px solid rgba(109,72,40,.32);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.35), 0 14px 30px rgba(0,0,0,.5);
 }
 
 /* SVG clue item */
 .clue-item {
-  position: absolute; cursor: pointer; z-index: 35;
-  background: none; border: none; padding: 0;
+  position: absolute;
+  cursor: pointer;
+  z-index: 35;
+  border: 1px solid rgba(184,154,102,.45);
+  border-radius: 4px;
+  padding: 8px 8px 6px;
+  background:
+    radial-gradient(circle at 24% 20%, rgba(255,255,255,.1), transparent 60%),
+    linear-gradient(180deg, rgba(36,25,18,.9), rgba(19,12,8,.94));
+  box-shadow: 2px 4px 14px rgba(0,0,0,.6);
+  transform: rotate(var(--clue-rot, 0deg));
+  transform-origin: center;
+  transition: transform 220ms, box-shadow 220ms, border-color 220ms;
   animation: clue-pulse 2.2s ease-in-out infinite;
 }
 .clue-item:focus:not(:focus-visible) { outline: none; }
+.clue-item:focus-visible {
+  outline: 2px solid rgba(255,170,0,.9);
+  outline-offset: 2px;
+}
+.clue-item::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, #ffd1d1, #b22a1f 70%);
+  box-shadow: 0 0 6px rgba(255,51,51,.5);
+}
 .clue-svg { width: 56px; height: 56px; display: block; }
 .clue-item:hover .clue-svg rect:first-child { stroke: rgba(255,200,80,.85); fill: rgba(255,170,0,.08); }
 .clue-item img.clue-svg {
-  border: 1px solid rgba(255,170,0,.5);
+  border: 1px solid rgba(255,170,0,.45);
   border-radius: 5px;
-  background: rgba(0,0,0,.55);
+  background: rgba(0,0,0,.45);
   padding: 2px;
-  transition: transform 200ms, box-shadow 200ms;
+  transition: transform 200ms, box-shadow 200ms, filter 200ms;
 }
-.clue-item:hover img.clue-svg {
-  transform: scale(1.06);
-  box-shadow: 0 0 12px rgba(255,170,0,.35);
+.clue-item:hover,
+.clue-item:focus-visible {
+  border-color: rgba(255,204,138,.72);
+  box-shadow: 0 0 0 1px rgba(255,170,0,.22), 4px 7px 20px rgba(0,0,0,.72);
+  transform: rotate(var(--clue-rot, 0deg)) scale(1.04);
+}
+.clue-item:hover img.clue-svg,
+.clue-item:focus-visible img.clue-svg {
+  transform: scale(1.08);
+  filter: brightness(1.12);
+  box-shadow: 0 0 14px rgba(255,170,0,.4);
 }
 .clue-item.found { opacity: 0 !important; pointer-events: none; transition: opacity .4s; }
+.clue-item.inspected {
+  border-color: rgba(122,179,255,.78);
+  box-shadow: 0 0 0 1px rgba(122,179,255,.4), 0 0 18px rgba(122,179,255,.28);
+}
+.clue-caption {
+  display: block;
+  margin-top: 6px;
+  max-width: 110px;
+  font-family: var(--font-ui);
+  font-size: .54rem;
+  line-height: 1.35;
+  letter-spacing: .05em;
+  color: rgba(224,210,186,.86);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+#clue-casefile {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  width: min(31vw, 340px);
+  min-height: 168px;
+  z-index: 40;
+  border: 1px solid rgba(122,179,255,.24);
+  background:
+    linear-gradient(180deg, rgba(6,4,14,.94), rgba(4,2,10,.95)),
+    repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(122,179,255,.06) 23px);
+  box-shadow: 0 10px 26px rgba(0,0,0,.56), inset 0 0 28px rgba(0,0,0,.34);
+  padding: 12px 14px;
+  font-family: var(--font-ui);
+}
+.clue-casefile-title {
+  font-size: .55rem;
+  letter-spacing: .22em;
+  color: var(--color-blue-neon);
+  margin-bottom: 8px;
+}
+#clue-casefile-name {
+  font-size: .8rem;
+  color: var(--color-mist);
+  margin-bottom: 5px;
+}
+#clue-casefile-caption,
+#clue-casefile-detail,
+#investigation-moment {
+  font-size: .64rem;
+  line-height: 1.5;
+  color: rgba(200,200,221,.85);
+}
+#clue-casefile-detail {
+  margin-top: 6px;
+  color: var(--color-amber);
+}
+#investigation-moment {
+  margin-top: 8px;
+  letter-spacing: .06em;
+  border-top: 1px dashed rgba(144,144,170,.35);
+  padding-top: 6px;
+}
+#investigation-moment.locked { color: rgba(255,170,0,.62); }
+#investigation-moment.unlocked { color: var(--color-green-term); }
+
+[data-theme="light"] #clue-desk {
+  background:
+    linear-gradient(0deg, rgba(224,209,176,.84), rgba(224,209,176,.84)),
+    repeating-linear-gradient(92deg, rgba(176,147,109,.32), rgba(176,147,109,.32) 7px, rgba(139,112,79,.18) 8px, rgba(139,112,79,.18) 15px);
+  border-color: rgba(92,58,154,.26);
+}
+
+[data-theme="light"] .clue-item {
+  background:
+    radial-gradient(circle at 24% 20%, rgba(255,255,255,.5), transparent 60%),
+    linear-gradient(180deg, rgba(253,244,227,.96), rgba(235,221,192,.94));
+  border-color: rgba(113,77,172,.35);
+}
+
+[data-theme="light"] .clue-caption {
+  color: rgba(65,44,96,.88);
+}
+
+[data-theme="light"] #clue-casefile {
+  background:
+    linear-gradient(180deg, rgba(253,247,236,.94), rgba(243,233,216,.95)),
+    repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(92,58,154,.08) 23px);
+  border-color: rgba(92,58,154,.32);
+  box-shadow: 0 10px 20px rgba(60,34,90,.22), inset 0 0 20px rgba(90,66,130,.14);
+}
+
+[data-theme="light"] #clue-casefile-name { color: #3f2a66; }
+[data-theme="light"] #clue-casefile-caption,
+[data-theme="light"] #investigation-moment { color: rgba(69,48,104,.84); }
+[data-theme="light"] #clue-casefile-detail { color: #7a4a0a; }
+
+@media (max-width: 900px) {
+  #clue-casefile {
+    width: min(74vw, 360px);
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 11px;
+  }
+
+  .clue-caption {
+    max-width: 96px;
+    font-size: .5rem;
+  }
+
+  #clue-desk {
+    right: 4%;
+    width: min(58vw, 430px);
+    height: min(38vh, 240px);
+  }
+}
+
+@media (max-width: 1200px) and (min-width: 901px) {
+  #clue-casefile {
+    width: min(42vw, 420px);
+    top: 16px;
+  }
+
+  .clue-caption {
+    max-width: 102px;
+  }
+}
 
 @keyframes clue-pulse {
   0%,100% { filter: drop-shadow(0 0 4px rgba(255,170,0,.3)); }
@@ -626,7 +817,7 @@ html.motion-reduced #custom-cursor {
 }
 
 #clue-counter {
-  position: absolute; top: 24px; right: 24px; z-index: 40; font-family: var(--font-mono);
+  position: absolute; top: 74px; right: 18px; z-index: 40; font-family: var(--font-mono);
   color: var(--color-green-term); text-shadow: var(--shadow-text-green); text-align: center;
 }
 .clues-count { font-size: 2.4rem; display: block; }
@@ -712,10 +903,11 @@ html.motion-reduced #custom-cursor {
   display: flex; flex-direction: column; align-items: center;
   cursor: pointer; z-index: 35; padding: 0 8px; border: none; background: none;
   transition: transform 200ms;
+  flex: 0 1 clamp(110px, 11vw, 148px);
 }
 .suspect-card:hover { transform: translateY(-4px); }
 .suspect-card img {
-  height: 216px;
+  height: clamp(128px, 12.5vw, 176px);
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;
@@ -1132,10 +1324,10 @@ html.motion-reduced #custom-cursor {
 #folder-system {
   position: absolute;
   left: 50%;
-  top: 26%;
+  top: 50%;
   transform: translate(-50%, -50%);
   z-index: 30;
-  width: min(92vw, 1100px);
+  width: min(90vw, 1100px);
 }
 
 /* Folder tabs */
@@ -1328,6 +1520,12 @@ html.motion-reduced #custom-cursor {
 /* The "dark" is a heavy deep-UV tint — the lit area reveals the bright paper */
 [data-theme="light"] #flashlight-overlay {
   background: radial-gradient(
+    circle 180px at 40% 73%,
+    rgba(240,210,255,.58) 0%,
+    rgba(185,115,245,.28) 42%,
+    rgba(110,48,170,0) 84%
+  ),
+  radial-gradient(
     circle 200px at 50% 50%,
     rgba(80,0,160,0.15) 0%,
     rgba(40,0,100,0.7) 40%,
@@ -1572,7 +1770,7 @@ html.motion-reduced #custom-cursor {
   .chapter-title { font-size: clamp(1.4rem, 5vw, 2rem); }
   #suspect-info-panel.open { height: auto; max-height: 70vh; overflow-y: auto; flex-direction: column; }
   #suspect-portrait { height: 100px; }
-  #folder-system { width: 95vw; top: 45%; }
+  #folder-system { width: 95vw; top: 50%; }
   #folder-body { max-height: 55vh; }
   .suspect-card img { height: 130px; }
   #corkboard { inset: 8px; }
@@ -1947,6 +2145,21 @@ button:focus-visible, [role="button"]:focus-visible {
 #restart-btn:hover {
   background: rgba(255, 40, 60, 0.18);
   box-shadow: 0 0 18px rgba(255, 40, 60, 0.3);
+}
+
+[data-theme="light"] #case-closed-panel {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(123, 47, 255, 0.3);
+  box-shadow: 0 14px 60px rgba(123, 47, 255, 0.1), inset 0 0 40px rgba(123, 47, 255, 0.04);
+}
+[data-theme="light"] #restart-btn {
+  color: var(--color-amber-dim);
+  background: rgba(123, 47, 255, 0.08);
+  border-color: rgba(123, 47, 255, 0.3);
+}
+[data-theme="light"] #restart-btn:hover {
+  background: rgba(123, 47, 255, 0.16);
+  box-shadow: 0 0 18px rgba(123, 47, 255, 0.25);
 }
 
 @media (max-width: 768px) {
