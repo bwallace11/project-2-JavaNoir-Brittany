@@ -269,13 +269,16 @@
         <p class="chapter-label ch1-slam-item">Chapter 01 — First Contact</p>
         <h2 class="chapter-title ch1-slam-item" id="ch1-title">The Alley</h2>
         <p class="chapter-subtitle ch1-slam-item">console.log · let · const</p>
-        <p class="chapter-body" style="margin-top:10px;"><strong>First Contact — console.log &amp; DevTools.</strong> Before you can investigate, you need a way to <em>see</em> what's happening. Open your browser's DevTools (press F12) and look at the Console tab. That's where <code style="color:var(--color-green-term)">console.log()</code> sends its messages — your flashlight into the code. Every clue you click on this page logs a message there. That's your first contact with JavaScript: you write a line, and the machine talks back.</p>
+        <p class="chapter-body" style="margin-top:10px;"><strong>First Contact — console.log & DevTools.</strong>
+                                                                 Before you investigate, you need a way to see what’s happening. Open DevTools (press F12) and go to the Console tab. That’s where <code style="color:var(--color-green-term)">console.log()</code> sends messages. It’s your flashlight into the code. Every clue you click on this page logs a message there. You write a line, and the machine talks back.</p>
         <div class="code-block">// First Contact — open DevTools (F12):
 console.log("Case opened.");
 console.log("Victim:", "Victor Ember");
 console.log("Clues found:", 0);
 // Check the Console tab — it replies.</div>
-        <p class="chapter-body" style="margin-top:10px;"><strong>Naming Things — let &amp; const.</strong> Now that you can see the output, you need somewhere to <em>store</em> facts. In JavaScript, a <strong>variable</strong> is your notepad. <code style="color:var(--color-green-term)">const</code> is like a photograph sealed in an evidence bag — once it's in there, it doesn't change. <code style="color:var(--color-green-term)">let</code> is a sticky note you can update as the case unfolds. Name your evidence, lock down what's certain, and keep the rest flexible.</p>
+        <p class="chapter-body" style="margin-top:10px;"><strong>Naming Things — let & const.</strong>
+                                                                 Now that you can see the output, you need somewhere to store facts. In JavaScript, a variable is your notepad. <code style="color:var(--color-green-term)">const</code> is like a photograph sealed in an evidence bag. Once it’s there, it doesn’t change. <code style="color:var(--color-green-term)">let</code> is a sticky note you can update as the case unfolds. Name your evidence, lock down what’s certain, and keep the rest flexible.
+        </p>
         <div class="code-block">// Naming Things — let vs const:
 const victimName = "Victor Ember";
 let suspectCount = 4;
@@ -348,11 +351,11 @@ console.log(suspectCount); // 3 — one cleared</div>
         </div>
       </div>
 
-      <div class="text-panel text-panel--right text-panel--top" style="z-index:35;max-width:420px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:22px 24px;">
+      <div class="text-panel text-panel--left text-panel--top ch2-panel-left" style="z-index:35;max-width:390px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:22px 24px;">
         <p class="chapter-label">Chapter 02 — The Interrogation Room</p>
         <h2 class="chapter-title" id="ch2-title">The Room<br>Reacts</h2>
         <p class="chapter-subtitle">addEventListener · classList · conditionals</p>
-        <p class="chapter-body" style="font-size:.87rem;"><strong>Listening.</strong> Sprout lined up the suspects in the cold fluorescent light. Each one gave nothing away — until you <em>applied pressure.</em> A good detective doesn't just observe; he creates reactions and reads them. In JavaScript, an <strong>event listener</strong> watches for something specific to happen — a click, a keypress, a hover — and fires a block of code in response. Without listeners, a page just sits there. With them, it <em>listens.</em></p>
+        <p class="chapter-body" style="font-size:.87rem;"><strong>Listening.</strong> Sprout lined up the suspects under cold fluorescent light. They gave nothing away until <em>pressure was applied.</em> A good detective creates reactions and reads them. In JavaScript, an <strong>event listener</strong> watches for something to happen like a click, keypress, or hover. When it happens, code runs. Without listeners, a page just sits there. With them, it <em>listens.</em></p>
         <div class="code-block" style="font-size:.7rem;">// Listening — addEventListener:
 const lamp = document.querySelector(
   '#lamp-toggle-btn'
@@ -365,7 +368,14 @@ lamp.addEventListener('click',
   }
 );
 // Now every click runs that code.</div>
-        <p class="chapter-body" style="font-size:.87rem;margin-top:10px;"><strong>The Switch.</strong> When a reaction occurs, you need to make a <em>decision.</em> That's a <strong>conditional</strong> — an <code style="color:var(--color-green-term)">if/else</code> block that checks a condition and runs different code depending on the answer. Combined with <code style="color:var(--color-green-term)">classList</code>, you can swap CSS classes on and off like flipping a suspect's demeanor under pressure. <code style="color:var(--color-green-term)">classList.add()</code> pins a label on. <code style="color:var(--color-green-term)">classList.remove()</code> tears one off. <code style="color:var(--color-green-term)">classList.toggle()</code> flips it. And <code style="color:var(--color-green-term)">classList.contains()</code> checks if it's there at all.</p>
+      </div>
+
+      <div class="text-panel text-panel--right text-panel--top ch2-panel-right" style="z-index:35;max-width:390px;background:rgba(3,2,10,.85);border:1px solid rgba(0,255,65,.15);padding:22px 24px;text-align:left;">
+        <p class="chapter-body" style="font-size:.87rem;margin-top:10px;">When a reaction happens, you make a <em>decision.</em> That is a <strong>conditional</strong> using <code style="color:var(--color-green-term)">if/else</code>. It checks a condition and runs different code depending on the result. With <code style="color:var(--color-green-term)">classList</code>, you can change CSS classes to update what the page shows.
+<code style="color:var(--color-green-term)">classList.add()</code> <em>pins a label on.</em>
+<code style="color:var(--color-green-term)">classList.remove()</code> <em>tears one off.</em>
+<code style="color:var(--color-green-term)">classList.toggle()</code> <em>flips it.</em>
+<code style="color:var(--color-green-term)">classList.contains()</code> <em>checks if it is there.</em> </p>
         <div class="code-block" style="font-size:.7rem;">// The Switch — conditionals + classList:
 const card = document.querySelector(
   '.suspect-card'
@@ -382,7 +392,7 @@ card.addEventListener('click', () => {
     console.log('Still hiding.');
   }
 });</div>
-        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">Reactions are fleeting. To build the full picture, Sprout needed to connect the dots — a web of hidden data only the evidence itself could reveal.</p>
+        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">Reactions are fleeting. To solve the case, Sprout had to <em>connect the clues</em> and reveal the hidden data inside the evidence.</p>
       </div>
 
     </article>
@@ -494,7 +504,7 @@ card.addEventListener('click', () => {
           <p class="chapter-label">Chapter 03 — The Crime Web</p>
           <h2 class="chapter-title" id="ch3-title" style="font-size:1.4rem;">The Crime<br>Board</h2>
           <p class="chapter-subtitle" style="font-size:.87rem;">data-* attributes</p>
-          <p class="chapter-body" style="font-size:.79rem;">Back at the precinct, Sprout covered an entire wall with photographs and string. Every piece of evidence had <em>hidden information</em> attached to it — invisible until you knew how to look. A photograph of the butler doesn't just show a face; flip it over and there's a name, a time stamp, a location. HTML elements work the same way. <strong>Data attributes</strong> let you attach extra details directly to an element using <code style="color:var(--color-green-term)">data-</code> as a prefix — invisible to the user but readable by JavaScript through the <code style="color:var(--color-green-term)">dataset</code> object. Click the cards and photos on this board to watch the web form.</p>
+          <p class="chapter-body" style="font-size:.79rem;">Back at the precinct, Sprout covered a wall with photos and string. Each piece of evidence had <em>hidden information</em> attached to it. A photo of the butler shows a face, but flip it over and there is a name, time, and location. HTML elements work the same way. <strong>Data attributes</strong> let you attach extra details to an element using <code style="color:var(--color-green-term)">data-</code>. These details are invisible to the user but readable by JavaScript through the <code style="color:var(--color-green-term)">dataset</code>object. Click the cards and photos on this board to watch the web form.</p>
           <div class="code-block" style="font-size:.65rem;">&lt;div data-suspect="butler"
      data-location="east-wing"&gt;
   Torn jacket fibre
@@ -512,7 +522,7 @@ if (card.dataset.suspect
     === 'butler') {
   console.log('Shortlisted.');
 }</div>
-          <p class="chapter-body" style="font-size:.72rem;margin-top:8px;opacity:.7;">The web was coming together. But some evidence couldn't be read in daylight — it needed a different kind of light to develop.</p>
+          <p class="chapter-body" style="font-size:.72rem;margin-top:8px;opacity:.7;">The web was coming together. But some evidence couldn't be read in daylight, it needed a different kind of light to develop.</p>
         </div>
       </div>
 
@@ -687,8 +697,8 @@ if (card.dataset.suspect
         <p class="chapter-label">Chapter 04 — The System</p>
         <h2 class="chapter-title" id="ch4-title" style="font-size:2rem;">The<br>Darkroom</h2>
         <p class="chapter-subtitle">CSS Custom Properties · Design Tokens</p>
-        <p class="chapter-body" style="font-size:.85rem;">In the basement of the precinct, Sprout hung the photographs to develop. In the red glow of the safelight, shapes emerged slowly from blank white paper — details invisible in the chaos of the crime scene suddenly made sharp and undeniable. A darkroom doesn't create new information; it <em>reveals</em> what was always there. The detective controlled the process with two dials: the duration of the chemical bath and the intensity of the light. Turn one dial, and the entire room transforms.</p>
-        <p class="chapter-body" style="font-size:.85rem;margin-top:8px;"><strong>CSS custom properties</strong> — called CSS variables — work like those dials. You define them once using <code style="color:var(--color-green-term)">--</code> as a prefix, then reference them throughout your CSS with <code style="color:var(--color-green-term)">var()</code>. The real power arrives when JavaScript reaches in and changes those variables at runtime. Change one value, and every element using it updates instantly — like flipping the light switch in this very room. Toggle the switch above and watch the scene transform: background, glow, color temperature — all from changing two custom properties.</p>
+        <p class="chapter-body" style="font-size:.85rem;">In the basement of the precinct, Sprout hung photographs to develop. Under the red safelight, shapes slowly appeared from blank paper. Details hidden at the crime scene became clear. A darkroom does not create information. It <em>reveals</em> what was already there. The detective controls the process with two dials: time in the chemicals and the intensity of the light. Turn one dial and the whole room changes.</p>
+        <p class="chapter-body" style="font-size:.85rem;margin-top:8px;"><strong>CSS custom properties</strong>, also called CSS variables, work the same way. You define them once using <code style="color:var(--color-green-term)">--</code>, then reference them throughout your CSS with <code style="color:var(--color-green-term)">var()</code>. JavaScript can change those variables while the page is running. Change one value and every element using it updates instantly. Toggle the switch above and watch the scene transform: background, glow, and color temperature all change from just two custom properties.</p>
         <div class="code-block" style="font-size:.68rem;">/* The System — define tokens once: */
 :root {
   --scene-bg:    #0a0818;
@@ -713,7 +723,7 @@ getComputedStyle(root)
 
 // One source of truth. Change it,
 // and everything updates instantly.</div>
-        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">The photos were developed. The evidence was visible. But Sprout had learned the hard way — if you don't write it down, it vanishes. The case needed a filing cabinet.</p>
+        <p class="chapter-body" style="font-size:.78rem;margin-top:10px;opacity:.7;">The photos were developed. The evidence was visible. But Sprout had learned the hard way, if you don't write it down, it vanishes. The case needed a filing cabinet.</p>
       </div>
 
     </article>
@@ -925,8 +935,9 @@ getComputedStyle(root)
             <div class="folder-row"><span class="flabel">MOTIVE</span><span class="fval">$4.2M estate</span></div>
             <div class="folder-row"><span class="flabel">STATUS</span><span class="fval" style="color:#8b0000;font-weight:bold;">OPEN</span></div>
             <div class="folder-divider" style="margin-top:10px;"></div>
-            <p style="font-size:.72rem;color:#3d1a00;line-height:1.75;font-family:var(--font-display);margin-top:8px;">Every detective knows the nightmare scenario: you step out for an hour, come back, and the precinct has been cleared out. Evidence scattered. Notes gone. Three days of work vanished like smoke. That's why Sprout kept a locked case file — every confession, every data point logged in a book that survived the night.</p>
-            <p style="font-size:.72rem;color:#5c2800;line-height:1.75;font-family:var(--font-display);margin-top:6px;"><strong>The Memory — localStorage.</strong> A web page, by default, has no memory. Reload it, and everything you've done is gone — like a precinct that clears its files every night. <code style="background:rgba(0,0,0,.08);padding:1px 3px;">localStorage</code> is the locked filing cabinet that survives the night shift. It stores key-value pairs on the user's device indefinitely, no server required. Variables remember for one session. localStorage remembers forever. The Evidence and Suspects tabs above update live as you investigate. The Storage tab shows the code that keeps your progress safe.</p>
+            <p style="font-size:.72rem;color:#3d1a00;line-height:1.75;font-family:var(--font-display);margin-top:8px;">Every detective knows the nightmare scenario. You step out for an hour and the precinct is cleared out. Evidence scattered. Notes gone. Days of work vanished. That is why Sprout kept a locked case file. Every confession and clue was recorded in a book that survived the night.</p>
+            <p style="font-size:.72rem;color:#5c2800;line-height:1.75;font-family:var(--font-display);margin-top:6px;"><strong>The Memory — localStorage.</strong>
+                A web page normally has no memory. Reload it and everything disappears. <code style="background:rgba(0,0,0,.08);padding:1px 3px;">localStorage</code> works like a locked filing cabinet. It stores key value pairs on the user's device with no server needed. Variables remember for one session. localStorage remembers long term. The Evidence and Suspects tabs above update as you investigate. The Storage tab shows the code that saves your progress.</p>
           </div>
 
           <div class="folder-page" id="fpage-evidence">
@@ -960,9 +971,11 @@ getComputedStyle(root)
           <div class="folder-page" id="fpage-storage">
             <div class="folder-stamp">MEMORY</div>
             <h3 style="font-family:var(--font-display);font-size:.95rem;color:#1a0a00;margin-bottom:8px;">THE FILING CABINET: localStorage</h3>
-            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>What it is:</strong> localStorage is a key-value store built into every browser. Unlike regular JavaScript variables — which disappear when the page closes — localStorage data persists on the user's device indefinitely, until the user clears their browser data or you explicitly delete it.</p>
-            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>Why it matters:</strong> localStorage lets you build experiences that remember users — saved settings, game progress, shopping carts, form drafts, dark/light mode preferences. It holds up to ~5MB per domain and needs no server or login.</p>
-            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>The catch:</strong> Everything stored is a string. To store objects or arrays, use <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.stringify()</code> to write and <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.parse()</code> to read them back.</p>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>What it is:</strong> localStorage is a key value store built into every browser. Regular JavaScript variables disappear when the page closes. localStorage data stays on the user's device until it is cleared or deleted.</p>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>Why it matters:</strong> localStorage lets sites remember users. It can store saved settings, game progress, shopping carts, form drafts, or dark and light mode preferences. It holds about 5MB per domain and needs no server.</p>
+            <p style="font-size:.72rem;line-height:1.7;color:#3d1a00;font-family:var(--font-display);margin-bottom:8px;"><strong>The catch:</strong> Everything stored is a string. To store objects or arrays use <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.stringify()</code> to save them and <code style="background:rgba(0,0,0,.08);padding:1px 3px;">JSON.parse()</code> to read them back.
+          <div class="storage-code"></p>
+
             <div class="storage-code">
               <div><span class="sc-comment">// Save evidence to the case file:</span></div>
               <div>localStorage.<span class="sc-fn">setItem</span>(<span class="sc-str">'clues'</span>, cluesFound);</div>

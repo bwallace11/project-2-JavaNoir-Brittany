@@ -500,9 +500,14 @@ html.motion-reduced #custom-cursor {
 .chapter--6 { background: radial-gradient(ellipse at 50% 12%, #130412 0%, #07030d 56%, #03020a 100%); }
 [data-theme="light"] .chapter--6 { background: linear-gradient(160deg, #f8f5f0 0%, #ede9e0 100%); }
 
-/* Keep Chapter 2 content clear of the persistent right-edge scroll hint. */
-.chapter--2 .text-panel--right {
-  right: 128px;
+.chapter--2 .ch2-panel-left {
+  left: 44px;
+  top: 20%;
+}
+
+.chapter--2 .ch2-panel-right {
+  right: 92px;
+  top: 20%;
 }
 
 .chapter--2 #suspect-row {
@@ -594,13 +599,6 @@ html.motion-reduced #custom-cursor {
   background:
     radial-gradient(circle 175px at 40% 73%, rgba(210,238,255,.52) 0%, rgba(125,185,255,.24) 40%, rgba(45,88,140,0) 82%),
     radial-gradient(circle 200px at 50% 50%, transparent 0%, rgba(0,0,0,.97) 100%);
-}
-
-/* UV flashlight for light mode — purple UV effect */
-[data-theme="light"] #flashlight-overlay {
-  background:
-    radial-gradient(circle 180px at 40% 73%, rgba(240,210,255,.58) 0%, rgba(185,115,245,.28) 42%, rgba(110,48,170,0) 84%),
-    radial-gradient(circle 250px at 50% 50%, transparent 0%, rgba(184,139,255,.55) 40%, rgba(184,139,255,.2) 100%);
 }
 
 /* Keep the detective dark so the hand-light reads as a front spotlight. */
