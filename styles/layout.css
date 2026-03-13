@@ -1433,9 +1433,9 @@ html.motion-reduced #custom-cursor {
   text-align: center;
   pointer-events: none;
 }
-#ch5-label .chapter-label { color: rgba(200,180,140,.5); }
-#ch5-label .chapter-title  { font-size: 1.4rem; color: rgba(200,180,140,.6); }
-#ch5-label .chapter-subtitle { font-size: .85rem; color: rgba(150,130,100,.5); }
+#ch5-label .chapter-label { color: rgba(62,34,10,.9); }
+#ch5-label .chapter-title  { font-size: 1.4rem; color: rgba(34,18,6,.95); text-shadow: none; }
+#ch5-label .chapter-subtitle { font-size: .85rem; color: rgba(74,42,16,.9); }
 
 /* ══════════════════════════════════════════
    UV BLACKLIGHT THEME OVERRIDES
@@ -1656,9 +1656,9 @@ html.motion-reduced #custom-cursor {
 [data-theme="light"] .tr-val { color: #006e62; text-shadow: 0 0 8px rgba(0,201,177,.5); }
 
 /* ── Chapter 5 folder in light mode ── */
-[data-theme="light"] #ch5-label .chapter-label { color: rgba(60,40,80,.5); }
-[data-theme="light"] #ch5-label .chapter-title { color: #b8a5e0; }
-[data-theme="light"] #ch5-label .chapter-subtitle { color: rgba(80,60,100,.5); }
+[data-theme="light"] #ch5-label .chapter-label { color: rgba(56,38,84,.88); }
+[data-theme="light"] #ch5-label .chapter-title { color: #3f2a66; text-shadow: none; }
+[data-theme="light"] #ch5-label .chapter-subtitle { color: rgba(70,48,106,.86); }
 
 /* ── Suspect cards in light mode (Ch2) ── */
 [data-theme="light"] .suspect-card img { filter: brightness(.7) saturate(.4); }
