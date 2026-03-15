@@ -1513,6 +1513,7 @@ html.motion-reduced #custom-cursor {
 
 /* ── Chapter titles: lavender in light mode ── */
 [data-theme="light"] .chapter-title { color: #b8a5e0; }
+[data-theme="light"] .text-panel .chapter-body { color: #b8a5e0; }
 
 /* ── Code + console: UV teal on warm white ── */
 [data-theme="light"] .chapter-body code {
