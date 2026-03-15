@@ -30,7 +30,9 @@ Finally, the project focuses on combining education with narrative design. Inste
 Overall, the JavaNoir project is designed to show how storytelling, animation, and programming concepts can work together. By using scroll-based interaction, themed visuals, and structured sections, the site turns a technical topic into an interactive experience that feels more like exploring a mystery than studying code.
 
 
-**Links:** [[JavaNoir](https://scrollytelling-javanoir-bwallace.netlify.app/)]
+**Links:**
+- [Live Site (Netlify)](https://scrollytelling-javanoir-bwallace.netlify.app/)
+- [Public Repository](https://github.com/bwallace11/project-2-JavaNoir-Brittany)
 
 
 **Tech stack:**
