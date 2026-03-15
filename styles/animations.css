@@ -1,0 +1,138 @@
+/* ============================================
+   ANIMATIONS — Lost in the Scroll
+   All keyframes and animation utilities.
+   ============================================ */
+
+/* ── RAIN ── */
+@keyframes rain-fall {
+  0%   { transform: translateY(-20px); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: .8; }
+  100% { transform: translateY(110vh); opacity: 0; }
+}
+
+/* ── NEON FLICKER ── */
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: .3; }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: inherit; opacity: 1;
+  }
+  20%, 24%, 55% { opacity: .4; text-shadow: none; }
+}
+
+@keyframes neon-red-alert {
+  0%, 17%, 22%, 26%, 52%, 57%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(255, 40, 70, 0.9), 0 0 22px rgba(255, 20, 50, 0.65);
+  }
+  18%, 24%, 54% {
+    opacity: .42;
+    text-shadow: none;
+  }
+}
+
+@keyframes skyline-flicker {
+  0%, 7%, 11%, 25%, 44%, 64%, 79%, 100% { opacity: .95; }
+  8%, 10%, 26%, 45%, 63%, 80% { opacity: .32; }
+}
+
+@keyframes fog-drift {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+  50%  { transform: translate3d(2%, 1%, 0) scale(1.06); }
+  100% { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+}
+
+/* ── TYPEWRITER ── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typewriter-cursor::after {
+  content: '█';
+  animation: cursor-blink 1s step-end infinite;
+  color: var(--color-green-term);
+}
+
+/* ── WINDOW BLINK ── */
+@keyframes window-blink {
+  0%, 97%, 100% { opacity: 1; }
+  98%, 99% { opacity: 0; }
+}
+
+/* ── SCROLL ARROW ── */
+@keyframes scroll-pulse {
+  0%, 100% { opacity: .3; }
+  50% { opacity: 1; }
+}
+.scroll-arrow { animation: scroll-pulse 2s ease-in-out infinite; }
+
+/* ── CH2 NERVOUS SUSPECT SHAKE ── */
+@keyframes suspect-nervous-shake {
+  0% { transform: translateX(0) rotate(0deg); }
+  12% { transform: translateX(calc(var(--nervous-intensity, 3px) * -1)) rotate(-0.5deg); }
+  24% { transform: translateX(var(--nervous-intensity, 3px)) rotate(0.5deg); }
+  36% { transform: translateX(calc(var(--nervous-intensity, 3px) * -0.8)) rotate(-0.4deg); }
+  48% { transform: translateX(calc(var(--nervous-intensity, 3px) * 0.8)) rotate(0.4deg); }
+  60% { transform: translateX(calc(var(--nervous-intensity, 3px) * -0.5)) rotate(-0.25deg); }
+  72% { transform: translateX(calc(var(--nervous-intensity, 3px) * 0.5)) rotate(0.25deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+.suspect-card img.suspect-nervous {
+  transform-origin: 50% 82%;
+  animation: suspect-nervous-shake var(--nervous-duration, 0.6s) ease-in-out 1;
+}
+
+/* ── CH5 BUILDING WINDOW FLICKER ── */
+@keyframes ch5-win-flicker {
+  0%, 100%  { background: rgba(255,200,80,.08); box-shadow: none; }
+  4%        { background: rgba(255,200,80,.5);  box-shadow: 0 0 4px rgba(255,200,80,.3); }
+  6%        { background: rgba(255,200,80,.08); box-shadow: none; }
+  50%       { background: rgba(255,200,80,.08); box-shadow: none; }
+  52%       { background: rgba(255,200,80,.55); box-shadow: 0 0 4px rgba(255,200,80,.3); }
+  78%       { background: rgba(255,200,80,.55); box-shadow: 0 0 4px rgba(255,200,80,.3); }
+  79%       { background: rgba(255,200,80,.2);  box-shadow: none; }
+  80%       { background: rgba(255,200,80,.5);  box-shadow: 0 0 3px rgba(255,200,80,.2); }
+  82%       { background: rgba(255,200,80,.08); box-shadow: none; }
+}
+
+/* ── CH5 RAIN SHIFT ── */
+@keyframes ch5-rain-shift {
+  0%   { transform: translateY(-100%) translateX(-4px); }
+  100% { transform: translateY(0%) translateX(4px); }
+}
+
+/* ── UTILITY CLASSES ── */
+.anim-flicker  { animation: flicker 3s ease-in-out infinite; }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── CUSTOM MOTION REDUCTION (user toggle) ── */
+html.motion-reduced *,
+html.motion-reduced *::before,
+html.motion-reduced *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.motion-reduced .scroll-arrow,
+html.motion-reduced .clue-item,
+html.motion-reduced .case-typed.case-red-neon {
+  opacity: 1 !important;
+}

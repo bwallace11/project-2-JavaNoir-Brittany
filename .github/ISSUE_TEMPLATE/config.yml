@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GSAP Scroll Reference
+    url: https://gsap.com/scroll/
+    about: Start here for scroll-driven examples and patterns.
