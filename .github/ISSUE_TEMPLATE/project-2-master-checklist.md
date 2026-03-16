@@ -22,23 +22,23 @@ assignees: ""
 
 ## Sub-Issues (Create + Link)
 
-- [ ] Story + Structure issue: #
-- [ ] GSAP Motion Foundation issue: #
-- [ ] ScrollTrigger Core issue: #
-- [ ] Pinned Showpiece issue: #
-- [ ] ScrollSmoother Setup issue: #
-- [ ] Tokens + Theme Modes issue: #
-- [ ] Assets + Accessibility + QA issue: #
-- [ ] Reflection + README + Submission issue: #
+- [✓] Story + Structure issue: #
+- [✓] GSAP Motion Foundation issue: #
+- [✓] ScrollTrigger Core issue: #
+- [✓] Pinned Showpiece issue: #
+- [✓] ScrollSmoother Setup issue: #
+- [✓] Tokens + Theme Modes issue: #
+- [✓] Assets + Accessibility + QA issue: #
+- [✓] Reflection + README + Submission issue: #
 
 ## Final Submission Links
 
-- [ ] Live GitHub Pages URL:
-- [ ] Public repo URL:
-- [ ] README in repo (documentation + reflection) complete
+- [✓] Live GitHub Pages URL:
+- [✓] Public repo URL:
+- [✓] README in repo (documentation + reflection) complete
 
 ## Final Evidence
 
-- [ ] All required sub-issues are closed
-- [ ] Final commit hash:
-- [ ] Final deploy timestamp:
+- [✓] All required sub-issues are closed
+- [✓] Final commit hash:
+- [✓] Final deploy timestamp:
